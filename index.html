@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para o PG ❤️</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #180b25, #65133e, #e83e75);
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+}
+
+.container {
+    padding: 25px;
+    z-index: 2;
+}
+
+h1 {
+    font-size: clamp(25px, 6vw, 42px);
+}
+
+p { color: #ffd5e5; }
+
+button {
+    background: #ff4f87;
+    border: 2px solid white;
+    border-radius: 40px;
+    padding: 18px 35px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 25px #ff4f87;
+    transition: .3s;
+}
+
+button:hover {
+    transform: scale(1.1);
+}
+
+#surpresa {
+    display: none;
+    animation: aparecer 1s ease;
+}
+
+#surpresa h2 {
+    font-size: clamp(35px, 9vw, 65px);
+    color: #fff;
+    text-shadow: 0 0 25px #ff80ad;
+}
+
+#surpresa p {
+    font-size: 22px;
+}
+
+.coracao {
+    position: fixed;
+    top: -30px;
+    animation: cair linear forwards;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes aparecer {
+    from { opacity: 0; transform: scale(.3); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cair {
+    to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div id="inicio">
+        <h1>PG, tenho uma surpresa para você...</h1>
+        <p>Promete clicar sem medo? 👀</p>
+        <button onclick="revelar()">DESCOBRIR ❤️</button>
+    </div>
+
+    <div id="surpresa">
+        <h2>PG EU TE AMO ❤️</h2>
+        <p>Você é especial, meu parceiro! 🥰</p>
+        <p>Assinado: Kauã ❤️</p>
+    </div>
+</div>
+
+<script>
+function revelar() {
+    document.getElementById("inicio").style.display = "none";
+    document.getElementById("surpresa").style.display = "block";
+
+    setInterval(() => {
+        const coracao = document.createElement("div");
+        coracao.className = "coracao";
+        coracao.innerHTML = "❤️";
+        coracao.style.left = Math.random() * 100 + "vw";
+        coracao.style.fontSize = (15 + Math.random() * 30) + "px";
+        coracao.style.animationDuration = (3 + Math.random() * 4) + "s";
+
+        document.body.appendChild(coracao);
+
+        setTimeout(() => coracao.remove(), 7000);
+    }, 150);
+}
+</script>
+
+</body>
+</html>
