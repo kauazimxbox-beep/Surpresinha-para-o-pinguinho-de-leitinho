@@ -1,124 +1,298 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para o PG ❤️</title>
+<title>Uma coisa para você, PG ❤️</title>
 
 <style>
-* { box-sizing: border-box; }
-
-body {
+* {
+    box-sizing: border-box;
     margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #180b25, #65133e, #e83e75);
-    font-family: Arial, sans-serif;
-    color: white;
-    text-align: center;
-    overflow: hidden;
+    padding: 0;
 }
 
-.container {
-    padding: 25px;
-    z-index: 2;
+body {
+    font-family: Arial, sans-serif;
+    background: #100914;
+    color: white;
+    text-align: center;
+    overflow-x: hidden;
+}
+
+section {
+    min-height: 100vh;
+    padding: 35px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+}
+
+.intro {
+    background: radial-gradient(circle, #55203f, #100914 75%);
+}
+
+.stage {
+    background: linear-gradient(145deg, #180d20, #39132f);
+}
+
+.final {
+    background: radial-gradient(circle, #a51951, #180914 75%);
 }
 
 h1 {
-    font-size: clamp(25px, 6vw, 42px);
+    font-size: clamp(35px, 8vw, 65px);
+    line-height: 1.2;
 }
 
-p { color: #ffd5e5; }
+h2 {
+    font-size: clamp(29px, 7vw, 55px);
+    line-height: 1.25;
+    max-width: 900px;
+}
+
+p {
+    font-size: clamp(19px, 4vw, 25px);
+    line-height: 1.6;
+    max-width: 700px;
+    color: #f7d6e7;
+}
 
 button {
-    background: #ff4f87;
-    border: 2px solid white;
-    border-radius: 40px;
     padding: 18px 35px;
+    border: none;
+    border-radius: 50px;
+    background: #ff4385;
     color: white;
-    font-size: 20px;
+    font-size: 19px;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 0 25px #ff4f87;
+    box-shadow: 0 0 25px #ff4385;
     transition: .3s;
 }
 
 button:hover {
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
-#surpresa {
-    display: none;
-    animation: aparecer 1s ease;
+.hidden {
+    display: none !important;
 }
 
-#surpresa h2 {
-    font-size: clamp(35px, 9vw, 65px);
-    color: #fff;
-    text-shadow: 0 0 25px #ff80ad;
+.content {
+    animation: entrance .9s ease;
 }
 
-#surpresa p {
-    font-size: 22px;
+@keyframes entrance {
+    from {
+        opacity: 0;
+        transform: translateY(35px) scale(.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
-.coracao {
+.progress {
     position: fixed;
-    top: -30px;
-    animation: cair linear forwards;
+    top: 0;
+    left: 0;
+    height: 5px;
+    width: 0%;
+    background: #ff4385;
+    z-index: 10;
+    transition: width .5s;
+}
+
+.heart {
+    position: fixed;
+    top: -40px;
+    z-index: 5;
     pointer-events: none;
-    z-index: 1;
+    animation: fall linear forwards;
 }
 
-@keyframes aparecer {
-    from { opacity: 0; transform: scale(.3); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes cair {
+@keyframes fall {
     to {
         transform: translateY(110vh) rotate(360deg);
         opacity: 0;
     }
+}
+
+.love {
+    font-size: clamp(48px, 12vw, 100px);
+    color: #ff7cac;
+    text-shadow: 0 0 30px #ff4385;
+    animation: pulse 1.2s infinite alternate;
+}
+
+@keyframes pulse {
+    to { transform: scale(1.08); }
+}
+
+.reveal {
+    font-size: clamp(37px, 9vw, 80px);
+    color: #ffdf69;
+    text-shadow: 0 0 25px #ff9c00;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <div id="inicio">
-        <h1>PG, tenho uma surpresa para você...</h1>
-        <p>Promete clicar sem medo? 👀</p>
-        <button onclick="revelar()">DESCOBRIR ❤️</button>
-    </div>
+<div class="progress" id="progress"></div>
 
-    <div id="surpresa">
-        <h2>PG EU TE AMO ❤️</h2>
-        <p>Você é especial, meu parceiro! 🥰</p>
-        <p>Assinado: Kauã ❤️</p>
+<!-- ETAPA 1 -->
+<section class="intro" id="step0">
+    <div class="content">
+        <p>📩 NOTIFICAÇÃO ESPECIAL</p>
+        <h1>PG, temos que conversar...</h1>
+        <p>Preparei uma coisa muito importante para você.</p>
+        <br>
+        <button onclick="next(1)">O que aconteceu? 👀</button>
     </div>
-</div>
+</section>
+
+<!-- ETAPA 2 -->
+<section class="stage hidden" id="step1">
+    <div class="content">
+        <h2>Primeiramente...</h2>
+        <p>Quero que você saiba que essa mensagem foi preparada com muito carinho.</p>
+        <p>Não é qualquer coisa. É algo que vem do fundo do coração.</p>
+        <button onclick="next(2)">Pode continuar ❤️</button>
+    </div>
+</section>
+
+<!-- ETAPA 3 -->
+<section class="stage hidden" id="step2">
+    <div class="content">
+        <h2>Você é uma pessoa muito especial.</h2>
+        <p>Apesar das nossas brincadeiras, das conversas e de todas as nossas histórias...</p>
+        <p>Existe algo que preciso dizer.</p>
+        <button onclick="next(3)">Estou preparado 🥹</button>
+    </div>
+</section>
+
+<!-- ETAPA 4 -->
+<section class="stage hidden" id="step3">
+    <div class="content">
+        <h2>Eu pensei muito antes de fazer isso...</h2>
+        <p>Foram noites de reflexão, momentos de dúvida e muita coragem.</p>
+        <p>Mas chegou a hora.</p>
+        <button onclick="next(4)">FALA LOGO KAUÃ 😭</button>
+    </div>
+</section>
+
+<!-- ETAPA 5 -->
+<section class="stage hidden" id="step4">
+    <div class="content">
+        <h2>PG...</h2>
+        <p>Independentemente do que aconteça, quero que você saiba de uma coisa:</p>
+        <h2>VOCÊ É IMPORTANTE PARA MIM.</h2>
+        <button onclick="next(5)">Estou emocionado...</button>
+    </div>
+</section>
+
+<!-- ETAPA 6 -->
+<section class="stage hidden" id="step5">
+    <div class="content">
+        <h2>Chegou o grande momento.</h2>
+        <p>Não existem mais palavras para explicar o que sinto.</p>
+        <p>É só clicar e descobrir.</p>
+        <button onclick="next(6)">REVELAR SENTIMENTOS ❤️</button>
+    </div>
+</section>
+
+<!-- DECLARAÇÃO -->
+<section class="final hidden" id="step6">
+    <div class="content">
+        <p>DE TODO O MEU CORAÇÃO...</p>
+        <h1 class="love">PG EU TE AMO ❤️</h1>
+        <p>Você é especial demais, meu parceiro!</p>
+        <button onclick="next(7)">Tenho mais uma coisa a dizer...</button>
+    </div>
+</section>
+
+<!-- PLOT TWIST -->
+<section class="intro hidden" id="step7">
+    <div class="content">
+        <p>MAS ESPERA...</p>
+        <h1>Antes de terminar...</h1>
+        <p>Tem uma coisa que está entalada na minha garganta.</p>
+        <button onclick="next(8)">O que foi? 😳</button>
+    </div>
+</section>
+
+<!-- REVELAÇÃO -->
+<section class="final hidden" id="step8">
+    <div class="content">
+        <p>DEPOIS DE TUDO QUE PASSAMOS...</p>
+        <h1 class="reveal">EU SEI QUE VOCÊ ME TRAIU COM O MANEL 💀</h1>
+        <p>EU TENHO PROVAS, PG.</p>
+        <p>O amor acabou. A investigação começou. 🕵️</p>
+        <button onclick="restart()">Rever essa humilhação 😂</button>
+    </div>
+</section>
 
 <script>
-function revelar() {
-    document.getElementById("inicio").style.display = "none";
-    document.getElementById("surpresa").style.display = "block";
+let current = 0;
 
-    setInterval(() => {
-        const coracao = document.createElement("div");
-        coracao.className = "coracao";
-        coracao.innerHTML = "❤️";
-        coracao.style.left = Math.random() * 100 + "vw";
-        coracao.style.fontSize = (15 + Math.random() * 30) + "px";
-        coracao.style.animationDuration = (3 + Math.random() * 4) + "s";
+function next(number) {
+    document.getElementById("step" + current)
+        .classList.add("hidden");
 
-        document.body.appendChild(coracao);
+    current = number;
 
-        setTimeout(() => coracao.remove(), 7000);
-    }, 150);
+    const section = document.getElementById("step" + current);
+    section.classList.remove("hidden");
+
+    section.querySelector(".content").style.animation = "none";
+    void section.offsetWidth;
+    section.querySelector(".content").style.animation = "entrance .9s ease";
+
+    document.getElementById("progress").style.width =
+        (current / 8 * 100) + "%";
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    if (current >= 6) {
+        startHearts();
+    }
+}
+
+function startHearts() {
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            const heart = document.createElement("div");
+            heart.className = "heart";
+            heart.textContent = ["❤️", "💗", "💕", "💀"][Math.floor(Math.random()*4)];
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.fontSize = (20 + Math.random() * 25) + "px";
+            heart.style.animationDuration = (3 + Math.random() * 4) + "s";
+
+            document.body.appendChild(heart);
+
+            setTimeout(() => heart.remove(), 7500);
+        }, i * 100);
+    }
+}
+
+function restart() {
+    document.getElementById("step" + current)
+        .classList.add("hidden");
+
+    current = 0;
+
+    document.getElementById("step0")
+        .classList.remove("hidden");
+
+    document.getElementById("progress").style.width = "0%";
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
 </script>
 
