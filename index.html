@@ -6,627 +6,358 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PG: A Última Marmita</title>
 <style>
-*{box-sizing:border-box;margin:0}
-body{
- background:#111426;color:white;font-family:Arial;
- display:flex;flex-direction:column;align-items:center;
- padding:15px;min-height:100vh
-}
-h1{color:#ffda69;text-align:center;margin:12px}
-p{color:#bbb;text-align:center;margin:8px}
-.game{
- width:min(100%,960px);border:4px solid #ffda69;
- border-radius:12px;overflow:hidden;background:#151b30
-}
-canvas{width:100%;display:block;image-rendering:pixelated}
-.hud{
- display:flex;justify-content:space-around;flex-wrap:wrap;
- gap:10px;padding:12px;background:#202942;font-weight:bold
-}
-#message{color:#ffdf76;min-height:28px;margin:12px;text-align:center}
-button{
- border:0;border-radius:8px;background:#ffda69;
- padding:12px 20px;font-weight:bold;cursor:pointer;margin:8px
-}
-.controls{text-align:center;color:#bbb;line-height:2;margin:10px}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#10152c;font-family:Arial,sans-serif}
+#game{display:block;width:100vw;height:100vh}
+#hud{position:fixed;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;pointer-events:none;color:white;text-shadow:0 3px 5px #17213b;font-weight:900}
+.panel{background:#17213bd9;border:2px solid #ffffff55;border-radius:16px;padding:10px 14px;box-shadow:0 5px 0 #090e20}
+#stage{font-size:17px}
+#health{font-size:20px;color:#ff7189;letter-spacing:3px}
+#food{font-size:14px;color:#ffe68a;margin-top:5px}
+#bossHud{display:none;position:fixed;top:95px;left:50%;transform:translateX(-50%);width:min(420px,70vw);text-align:center;color:white;font-weight:900;text-shadow:0 2px 4px #111}
+#bossBar{height:15px;background:#281b2c;border:2px solid white;border-radius:20px;overflow:hidden;margin-top:5px}
+#bossFill{height:100%;width:100%;background:linear-gradient(90deg,#ff466a,#ffb23d);transition:width .2s}
+#actions{position:fixed;right:15px;top:75px;display:flex;gap:8px}
+button{border:2px solid #ffffff77;background:#17213be8;color:white;border-radius:12px;padding:10px 13px;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #090e20}
+button:hover{filter:brightness(1.25);transform:translateY(-1px)}
+#overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#090e20b8;padding:20px}
+#box{width:min(560px,94vw);background:linear-gradient(145deg,#263d70,#17213b);border:3px solid #ffffff88;border-radius:26px;padding:30px;text-align:center;color:white;box-shadow:0 15px 50px #0009}
+#box h1{font-size:clamp(30px,6vw,54px);margin:0 0 10px;color:#ffe68a;text-shadow:0 5px 0 #a85b32}
+#box p{line-height:1.6;color:#e6edff}
+#start{font-size:18px;padding:14px 28px;background:linear-gradient(#ffcb58,#f28a35);color:#34203a;border:0;box-shadow:0 5px 0 #a64c26}
+.small{font-size:12px;opacity:.8}
+#toast{position:fixed;left:50%;bottom:35px;transform:translateX(-50%);background:#17213beF;color:white;border:2px solid #ffffff66;padding:12px 20px;border-radius:30px;font-weight:900;opacity:0;transition:opacity .2s;pointer-events:none}
+@media(max-width:600px){#hud{top:7px;left:7px;right:7px}.panel{padding:7px 9px}#stage{font-size:13px}#health{font-size:16px}#actions{top:65px;right:7px}button{padding:8px;font-size:11px}}
 </style>
 </head>
 <body>
+<canvas id="game"></canvas>
 
-<h1>🥩 PG: A ÚLTIMA MARMITA</h1>
-<p>Uma aventura épica contra Tinocadas Malvadeza</p>
-
-<div class="game">
-<canvas id="game" width="960" height="540"></canvas>
-<div class="hud">
- <span>❤️ <b id="lives">3</b></span>
- <span>🥩 <b id="food">0</b>/5</span>
- <span>⭐ <b id="score">0</b></span>
- <span>🌎 Fase <b id="phase">1</b>/5</span>
+<div id="hud">
+  <div class="panel">
+    <div id="stage">FASE 1 — FLORESTA DO LANCHE</div>
+    <div id="health">♥ ♥ ♥</div>
+    <div id="food">🍖 Energia: 0</div>
+  </div>
+  <div class="panel" id="score">PONTOS: 0</div>
 </div>
+<div id="bossHud">
+  <div>🔥 TINOCO — CHEFE FINAL</div>
+  <div id="bossBar"><div id="bossFill"></div></div>
 </div>
-
-<div id="message">Colete 5 marmitas para despertar o Super Na Boquinha!</div>
-<button onclick="restart()">RECOMEÇAR JOGO</button>
-
-<div class="controls">
- <b>CONTROLES</b><br>
- A/D ou ←/→ : Movimentar PG<br>
- W / ↑ / ESPAÇO : Pular<br>
- X : Ativar Super Na Boquinha (com 5 marmitas)<br>
- <br>Desvie dos ataques e não deixe Tinocadas alcançar você!
+<div id="actions">
+  <button id="full">⛶ TELA CHEIA</button>
+  <button id="sound">🔊 SOM</button>
 </div>
+<div id="overlay">
+  <div id="box">
+    <h1>PG: A ÚLTIMA MARMITA</h1>
+    <p>Uma aventura épica, cinco fases e um único objetivo: sobreviver à perseguição de Tinoco e conquistar a marmita lendária!</p>
+    <p><b>A / D</b> ou setas: andar<br><b>W / Espaço / ↑</b>: pular<br><b>X</b>: Super Na Boquinha<br><b>R</b>: reiniciar</p>
+    <button id="start">COMEÇAR A AVENTURA</button>
+    <p class="small">Dica: pegue a marmita dourada de cada fase para recuperar sua vida!</p>
+  </div>
+</div>
+<div id="toast"></div>
 
 <script>
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
-const W=960,H=540;
+const canvas=document.getElementById("game"),ctx=canvas.getContext("2d");
+let W=innerWidth,H=innerHeight,dpr=1;
+function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+"px";canvas.style.height=H+"px";ctx.setTransform(dpr,0,0,dpr,0,0)}
+addEventListener("resize",resize);resize();
 
 const keys={};
-let player,phase,food,score,lives,camera;
-let platforms,meals,hazards,projectiles,boss;
-let frame=0,gameState="playing";
-let messageTimer=0;
+addEventListener("keydown",e=>{
+  if(["ArrowLeft","ArrowRight","ArrowUp"," "].includes(e.key))e.preventDefault();
+  keys[e.key.toLowerCase()]=true;
+  if(e.key.toLowerCase()==="x")activateSuper();
+  if(e.key.toLowerCase()==="r"&&ended)restart();
+});
+addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
 
+const stageNames=["FLORESTA DO LANCHE","CIDADE DA FOME","DESERTO DO BOLO","FORTALEZA VBANANA","CASTELO DO TINOCO"];
 const themes=[
- {name:"Floresta da Fome",sky:"#80c9ef",ground:"#527b39",platform:"#80532e"},
- {name:"Cidade das Batatas",sky:"#ffb879",ground:"#72564b",platform:"#a17a5b"},
- {name:"Deserto do Bolo Banana",sky:"#f6c65c",ground:"#c38a43",platform:"#9a6537"},
- {name:"Fortaleza da Vbanana",sky:"#41355e",ground:"#38334d",platform:"#71618e"},
- {name:"Castelo da Malvadeza",sky:"#261b3d",ground:"#36243c",platform:"#75506e"}
+  ["#68c8ee","#d8f7c4","#398c56"],
+  ["#71b8e8","#e8c8ff","#5666a9"],
+  ["#ffbd70","#ffe8a7","#c77b3b"],
+  ["#6a78bd","#c7b8ff","#45417e"],
+  ["#e77d9d","#ffd4ae","#703b68"]
 ];
+const levelWidth=2350;
+let level=0,camera=0,score=0,ended=false,started=false,toastTimer=0;
+let player,enemy,platforms,foods,gold,particles=[],projectiles=[],boss=null;
+let invuln=0,superTime=0,foodEnergy=0,lastTime=0,shake=0,soundOn=true;
 
-const LEVEL_LENGTH=2100;
-
-function say(t){
- document.getElementById("message").textContent=t;
- messageTimer=150;
+function makeLevel(n){
+  platforms=[{x:0,y:H-75,w:levelWidth,h:100}];
+  for(let i=0;i<11;i++){
+    let x=260+i*185;
+    let y=H-180-(i%3)*55;
+    platforms.push({x,y,w:115+(i%2)*35,h:20});
+  }
+  foods=[];
+  for(let i=0;i<13;i++){
+    let x=210+i*155,y=H-130-(i%3)*60;
+    foods.push({x,y,r:13,taken:false});
+  }
+  gold={x:levelWidth-430,y:H-160,taken:false};
+  player={x:90,y:H-150,vx:0,vy:0,w:42,h:58,ground:false,face:1};
+  enemy={x:levelWidth-100,y:H-150,vx:0,vy:0,w:48,h:62,ground:false,hit:0,jumpWait:0};
+  camera=0;particles=[];projectiles=[];boss=null;
+  document.getElementById("stage").textContent="FASE "+(n+1)+" — "+stageNames[n];
+  document.getElementById("bossHud").style.display="none";
+  updateHud();
 }
-
-function restart(){
- phase=1;
- food=0;
- score=0;
- lives=3;
- frame=0;
- gameState="playing";
- camera=0;
- createLevel();
- say("A aventura começou! PG precisa salvar seu amigo!");
+function restart(){level=0;score=0;foodEnergy=0;invuln=0;superTime=0;ended=false;started=true;document.getElementById("overlay").style.display="none";makeLevel(0)}
+function updateHud(){
+  document.getElementById("health").textContent="♥ ".repeat(Math.max(0,player?player.hp:3))||"";
+  document.getElementById("food").textContent="🍖 Energia: "+foodEnergy+" / 3"+(superTime>0?" — SUPER ATIVO!":"");
+  document.getElementById("score").textContent="PONTOS: "+score;
 }
-
-function createLevel(){
- player={
-  x:70,y:380,w:42,h:55,
-  vx:0,vy:0,speed:4.5,
-  grounded:false,inv:0,
-  facing:1,superTime:0,
-  superCooldown:0
- };
-
- platforms=[
-  {x:0,y:490,w:550,h:50},
-  {x:630,y:490,w:500,h:50},
-  {x:1220,y:490,w:500,h:50},
-  {x:1800,y:490,w:350,h:50}
- ];
-
- // Plataformas suspensas
- for(let i=0;i<7;i++){
-  platforms.push({
-   x:200+i*265,
-   y:370-(i%3)*65,
-   w:125,h:18
-  });
- }
-
- meals=[];
- for(let i=0;i<13;i++){
-  meals.push({
-   x:220+i*145,
-   y:330-(i%3)*45,
-   taken:false
-  });
- }
-
- hazards=[];
- for(let i=0;i<10;i++){
-  hazards.push({
-   x:450+i*175,y:466,w:35,h:24,
-   type:i%3===0?"banana":"spike"
-  });
- }
-
- projectiles=[];
-
- boss={
-  x:1900,y:410,w:54,h:70,
-  hp:phase===5?5:0,
-  teleport:150,
-  attack:100,
-  laser:240,
-  laserWarning:0,
-  laserActive:0,
-  active:phase===5,
-  defeated:false
- };
-
- camera=0;
- updateHUD();
-}
-
-function updateHUD(){
- document.getElementById("lives").textContent=lives;
- document.getElementById("food").textContent=food;
- document.getElementById("score").textContent=score;
- document.getElementById("phase").textContent=phase;
-}
-
-function rect(x,y,w,h,color){
- ctx.fillStyle=color;
- ctx.fillRect(x-camera,y,w,h);
-}
-
-function drawText(t,x,y,size,color="white"){
- ctx.fillStyle=color;
- ctx.font=`bold ${size}px Arial`;
- ctx.fillText(t,x-camera,y);
-}
-
-function drawBackground(){
- let theme=themes[phase-1];
- ctx.fillStyle=theme.sky;
- ctx.fillRect(0,0,W,H);
-
- // Sol / lua
- ctx.fillStyle=phase===5?"#d6a4ef":"#ffe18b";
- ctx.beginPath();
- ctx.arc(790-camera*.08,90,48,0,Math.PI*2);
- ctx.fill();
-
- // Montanhas
- for(let i=0;i<8;i++){
-  let x=i*300-camera*.35;
-  ctx.fillStyle=phase===5?"#42334e":"#6d9a7c";
-  ctx.beginPath();
-  ctx.moveTo(x,490);
-  ctx.lineTo(x+150,230);
-  ctx.lineTo(x+300,490);
-  ctx.fill();
- }
-
- // Nuvens
- for(let i=0;i<7;i++){
-  let x=(i*250-camera*.2+1200)%1200;
-  ctx.fillStyle="#ffffff99";
-  ctx.beginPath();
-  ctx.arc(x,100+i%2*60,25,0,7);
-  ctx.arc(x+30,95+i%2*60,30,0,7);
-  ctx.arc(x+60,110+i%2*60,22,0,7);
-  ctx.fill();
- }
-}
-
-function drawWorld(){
- let theme=themes[phase-1];
-
- platforms.forEach(p=>{
-  rect(p.x,p.y,p.w,p.h,theme.platform);
-  rect(p.x,p.y,p.w,7,theme.ground);
- });
-
- hazards.forEach(h=>{
-  let x=h.x-camera;
-  ctx.font="30px Arial";
-  ctx.fillText(h.type==="banana"?"🍌":"🔺",x,h.y+24);
- });
-
- meals.forEach(m=>{
-  if(m.taken)return;
-  let x=m.x-camera;
-  ctx.font="30px Arial";
-  ctx.fillText("🥩",x,m.y);
-  ctx.font="17px Arial";
-  ctx.fillText("🍟",x+5,m.y+13);
- });
-}
-
-function drawPG(){
- const x=player.x-camera,y=player.y;
-
- // Sombra
- ctx.fillStyle="#0004";
- ctx.beginPath();
- ctx.ellipse(x+21,y+55,23,5,0,0,7);
- ctx.fill();
-
- // Pernas
- ctx.fillStyle="#30303d";
- ctx.fillRect(x+5,y+43,13,12);
- ctx.fillRect(x+26,y+43,13,12);
-
- // Corpo e barriga
- ctx.fillStyle="#246bc4";
- ctx.fillRect(x+5,y+19,34,30);
- ctx.fillStyle="#75452f";
- ctx.beginPath();
- ctx.ellipse(x+23,y+35,19,17,0,0,7);
- ctx.fill();
-
- // Cabeça
- ctx.fillStyle="#75452f";
- ctx.beginPath();
- ctx.arc(x+22,y+13,19,0,7);
- ctx.fill();
-
- // Cabelo
- ctx.fillStyle="#17131a";
- ctx.fillRect(x+6,y-5,32,8);
- ctx.fillRect(x+4,y+1,7,8);
-
- // Olhos
- ctx.fillStyle="white";
- ctx.fillRect(x+10,y+10,8,8);
- ctx.fillRect(x+27,y+10,8,8);
- ctx.fillStyle="#171717";
- ctx.fillRect(x+14,y+12,4,5);
- ctx.fillRect(x+30,y+12,4,5);
-
- // Boca
- ctx.fillStyle="#3d1010";
- ctx.fillRect(x+16,y+25,15,5);
-
- // Super Na Boquinha
- if(player.superTime>0){
-  ctx.fillStyle="#ffb900";
-  ctx.font="28px Arial";
-  ctx.fillText("✨",x-10,y-20);
-
-  ctx.fillStyle="#a52b2b";
-  ctx.beginPath();
-  ctx.ellipse(x+22,y+27,23,25,0,0,7);
-  ctx.fill();
-
-  ctx.fillStyle="#fff";
-  ctx.fillRect(x+9,y+15,26,7);
- }
-
- if(player.inv>0&&frame%8<4){
-  ctx.globalAlpha=.4;
-  ctx.fillStyle="white";
-  ctx.fillRect(x,y-5,45,65);
-  ctx.globalAlpha=1;
- }
-}
-
-function drawBoss(){
- if(!boss.active||boss.defeated)return;
-
- const x=boss.x-camera,y=boss.y;
-
- // Aura
- ctx.fillStyle="#a82d8a33";
- ctx.beginPath();
- ctx.arc(x+27,y+30,55,0,7);
- ctx.fill();
-
- // Pernas
- ctx.fillStyle="#292030";
- ctx.fillRect(x+5,y+52,15,17);
- ctx.fillRect(x+34,y+52,15,17);
-
- // Corpo moreno
- ctx.fillStyle="#8c583c";
- ctx.fillRect(x+4,y+20,47,36);
-
- // Cabeça
- ctx.fillStyle="#a76d49";
- ctx.beginPath();
- ctx.arc(x+27,y+15,24,0,7);
- ctx.fill();
-
- // Cabelo
- ctx.fillStyle="#251b19";
- ctx.fillRect(x+5,y-8,45,13);
-
- // Olhos
- ctx.fillStyle="#fff";
- ctx.fillRect(x+12,y+9,10,9);
- ctx.fillRect(x+33,y+9,10,9);
- ctx.fillStyle="#a00";
- ctx.fillRect(x+16,y+12,4,5);
- ctx.fillRect(x+36,y+12,4,5);
-
- // Vbanana
- ctx.save();
- ctx.translate(x+52,y+37);
- ctx.rotate(-.6);
- ctx.font="25px Arial";
- ctx.fillText("🍌",0,0);
- ctx.restore();
-
- drawText("TINOCADAS",boss.x-15,y-20,16,"#ffb0ce");
-
- // Barra de vida
- rect(boss.x-10,y-37,75,8,"#333");
- rect(boss.x-10,y-37,75*Math.max(0,boss.hp/5),8,"#ff355f");
-}
-
-function drawProjectiles(){
- projectiles.forEach(p=>{
-  ctx.font="30px Arial";
-  ctx.fillText(p.type==="cake"?"🍰":"💥",p.x-camera,p.y);
- });
-}
-
-function collide(a,b){
- return a.x<b.x+b.w&&a.x+a.w>b.x&&
- a.y<b.y+b.h&&a.y+a.h>b.y;
-}
-
-function hurt(){
- if(player.inv>0||player.superTime>0)return;
- lives--;
- player.inv=100;
- player.vy=-8;
- player.vx=-player.facing*5;
- updateHUD();
- say("Cuidado! Tinocadas está ficando mais forte!");
-
- if(lives<=0)gameState="dead";
-}
-
+function showToast(t){let el=document.getElementById("toast");el.textContent=t;el.style.opacity=1;toastTimer=1.7}
 function activateSuper(){
- if(food<5||player.superTime>0)return;
-
- food-=5;
- player.superTime=180;
- score+=500;
- say("🔥 SUPER NA BOQUINHA ATIVADO!!!");
- updateHUD();
+  if(!started||ended||foodEnergy<3)return;
+  foodEnergy-=3;superTime=5;showToast("SUPER NA BOQUINHA ATIVADO!");
+  for(let i=0;i<20;i++)burst(player.x+player.w/2,player.y+player.h/2,"#ffe66d");
+  updateHud();
 }
-
-function update(){
- if(gameState!=="playing")return;
-
- frame++;
-
- let left=keys["a"]||keys["arrowleft"];
- let right=keys["d"]||keys["arrowright"];
-
- player.vx=0;
- if(left){player.vx=-player.speed;player.facing=-1}
- if(right){player.vx=player.speed;player.facing=1}
-
- if((keys[" "]||keys["w"]||keys["arrowup"])&&player.grounded){
-  player.vy=-13;
-  player.grounded=false;
- }
-
- player.vy=Math.min(player.vy+.65,15);
-
- player.x+=player.vx;
- player.x=Math.max(0,Math.min(player.x,LEVEL_LENGTH-50));
-
- player.y+=player.vy;
- player.grounded=false;
-
- platforms.forEach(p=>{
-  if(collide(player,p)&&player.vy>=0&&
-   player.y+player.h-player.vy<=p.y+12){
-   player.y=p.y-player.h;
-   player.vy=0;
-   player.grounded=true;
-  }
- });
-
- // Coleta de marmitas
- meals.forEach(m=>{
-  if(!m.taken&&
-  Math.abs(player.x+20-m.x)<35&&
-  Math.abs(player.y+25-m.y)<40){
-   m.taken=true;
-   food++;
-   score+=100;
-   updateHUD();
-   say("🥩 MARMITA COLETADA! +100 pontos");
-  }
- });
-
- // Armadilhas
- hazards.forEach(h=>{
-  if(collide(player,{x:h.x,y:h.y+5,w:h.w,h:20})){
-   hurt();
-  }
- });
-
- // Super
- if(player.superTime>0){
-  player.superTime--;
-  if(boss.active&&!boss.defeated&&
-   Math.abs(player.x-boss.x)<100){
-   boss.hp-=.035;
-   if(boss.hp<=0)boss.defeated=true;
+function burst(x,y,color){for(let i=0;i<9;i++)particles.push({x,y,vx:(Math.random()-.5)*260,vy:(Math.random()-.7)*240,life:.55,color,r:2+Math.random()*4})}
+function rectHit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
+function hurt(){
+  if(invuln>0||ended)return;
+  player.hp--;invuln=3;shake=.3;showToast("PG LEVOU DANO! CUIDADO!");
+  burst(player.x+20,player.y+25,"#ff6a8a");
+  if(player.hp<=0){finish(false)}
+  updateHud();
+}
+function finish(win){
+  ended=true;
+  document.getElementById("overlay").style.display="flex";
+  document.getElementById("box").innerHTML=win?
+  `<h1>🏆 VITÓRIA!</h1><p>PG derrotou Tinoco e conquistou a marmita lendária!</p><p>Depois de tanta aventura, chegou a hora do almoço!</p><button id="start" onclick="restart()">JOGAR NOVAMENTE</button>`:
+  `<h1>💥 FIM DE JOGO</h1><p>Tinoco conseguiu alcançar PG desta vez...</p><p>Mas uma lenda nunca desiste da marmita!</p><button id="start" onclick="restart()">TENTAR NOVAMENTE</button>`;
+}
+function nextLevel(){
+  if(level<4){level++;makeLevel(level);showToast("FASE "+(level+1)+"! TINOCO NÃO DESISTIU!")}
+  else startBoss();
+}
+function startBoss(){
+  boss={x:levelWidth-300,y:H-190,w:100,h:115,hp:8,max:8,attack:1.3,flash:0};
+  enemy=null;document.getElementById("bossHud").style.display="block";
+  showToast("CHEGOU A HORA DO CONFRONTO FINAL!");
+}
+function update(dt){
+ if(!started||ended)return;
+ dt=Math.min(dt,.033);
+ if(invuln>0)invuln-=dt;
+ if(superTime>0)superTime-=dt;
+ if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)document.getElementById("toast").style.opacity=0}
+ if(shake>0)shake-=dt;
+ const left=keys.a||keys.arrowleft,right=keys.d||keys.arrowright,jump=keys.w||keys.arrowup||keys[" "];
+ player.vx=(right?1:0)-(left?1:0);
+ if(player.vx)player.face=Math.sign(player.vx);
+ player.vx*=255;
+ if(jump&&player.ground){player.vy=-650;player.ground=false}
+ player.vy+=1500*dt;
+ player.x+=player.vx*dt;player.y+=player.vy*dt;
+ player.x=Math.max(0,Math.min(levelWidth-player.w,player.x));
+ player.ground=false;
+ for(const p of platforms){
+  if(player.x+player.w>p.x&&player.x<p.x+p.w&&player.y+player.h>=p.y&&player.y+player.h<=p.y+30&&player.vy>=0){
+   player.y=p.y-player.h;player.vy=0;player.ground=true;
   }
  }
-
- // Boss
- if(boss.active&&!boss.defeated){
-  boss.teleport--;
-  boss.attack--;
-  boss.laser--;
-
-  // Teletransporte
-  if(boss.teleport<=0){
-   boss.x=Math.max(1250,Math.min(1950,player.x+300));
-   boss.y=410;
-   boss.teleport=220;
-   say("⚠ TINOCADAS SE TELETRANSPORTOU!");
+ if(player.y>H+200){hurt();player.y=H-160;player.vy=0}
+ // Tinoco persegue PG em todas as fases.
+ if(enemy){
+  let dx=player.x-enemy.x;
+  enemy.vx=Math.sign(dx)*Math.min(205,95+Math.abs(dx)*.09);
+  enemy.x+=enemy.vx*dt;
+  enemy.vy+=1500*dt;enemy.y+=enemy.vy*dt;enemy.ground=false;
+  for(const p of platforms){
+   if(enemy.x+enemy.w>p.x&&enemy.x<p.x+p.w&&enemy.y+enemy.h>=p.y&&enemy.y+enemy.h<=p.y+30&&enemy.vy>=0){
+    enemy.y=p.y-enemy.h;enemy.vy=0;enemy.ground=true;
+   }
   }
-
-  // Bolo Banana
+  enemy.jumpWait-=dt;
+  if(player.y+10<enemy.y&&enemy.ground&&enemy.jumpWait<=0){enemy.vy=-590;enemy.jumpWait=1.1}
+  if(rectHit(player,enemy)){
+   if(superTime>0){enemy.hit=.2;enemy.x+=(enemy.x>player.x?1:-1)*100*dt;score+=2}
+   else hurt();
+  }
+ }
+ // Coleta de comida
+ for(const f of foods){
+  if(!f.taken&&Math.abs((player.x+21)-f.x)<32&&Math.abs((player.y+25)-f.y)<38){
+   f.taken=true;foodEnergy=Math.min(3,foodEnergy+1);score+=100;burst(f.x,f.y,"#ffe66d");updateHud();
+  }
+ }
+ // Marmita dourada: recupera vida.
+ if(gold&&!gold.taken&&Math.abs(player.x+21-gold.x)<42&&Math.abs(player.y+25-gold.y)<50){
+  gold.taken=true;player.hp=Math.min(3,player.hp+1);score+=500;showToast("MARMITA DOURADA! VIDA RECUPERADA!");
+  burst(gold.x,gold.y,"#ffd84a");updateHud();
+ }
+ if(!boss&&player.x>levelWidth-100)nextLevel();
+ // Batalha final
+ if(boss){
+  let dx=player.x-boss.x;
+  boss.x+=Math.sign(dx)*Math.min(90,Math.abs(dx)*.3)*dt;
+  boss.attack-=dt;boss.flash=Math.max(0,boss.flash-dt);
   if(boss.attack<=0){
-   projectiles.push({
-    x:boss.x,y:boss.y+25,
-    vx:player.x<boss.x?-5:5,
-    type:"cake",w:30,h:30
-   });
-   boss.attack=150;
-   say("🍌 ATAQUE BOLO BANANA!");
+   projectiles.push({x:boss.x+boss.w/2,y:boss.y+40,vx:Math.sign(player.x-boss.x)*330,life:3});
+   boss.attack=1.5;
   }
-
-  // Laser da Vbanana
-  if(boss.laser<=0){
-   boss.laserWarning=65;
-   boss.laser=320;
-   say("⚡ A VBANANA ESTÁ CARREGANDO O LASER!");
+  if(superTime>0&&Math.abs(player.x-boss.x)<175&&Math.abs(player.y-boss.y)<125){
+   boss.hp-=dt*2.6;boss.flash=.12;
   }
-
-  if(boss.laserWarning>0){
-   boss.laserWarning--;
-   if(boss.laserWarning===0){
-    boss.laserActive=45;
-   }
+  if(rectHit(player,boss)&&superTime<=0)hurt();
+  for(const q of projectiles){
+   q.x+=q.vx*dt;q.life-=dt;
+   if(Math.abs(q.x-player.x)<27&&Math.abs(q.y-player.y)<48){q.life=0;hurt()}
   }
-
-  if(boss.laserActive>0){
-   boss.laserActive--;
-   if(player.x<boss.x+500&&player.x+player.w>boss.x+30&&
-      player.y+player.h>boss.y+20&&player.y<boss.y+65){
-    hurt();
-   }
-  }
-
-  // Super derrota o vilão
-  if(boss.defeated){
-   boss.active=false;
-   score+=2000;
-   say("TINOCADAS FOI ENGOLIDO PELO SUPER NA BOQUINHA!");
-  }
+  projectiles=projectiles.filter(q=>q.life>0);
+  document.getElementById("bossFill").style.width=Math.max(0,boss.hp/boss.max*100)+"%";
+  if(boss.hp<=0){score+=3000;updateHud();finish(true)}
  }
-
- // Projéteis
- projectiles.forEach(p=>{
-  p.x+=p.vx;
-  if(collide(player,p))hurt();
- });
-
- projectiles=projectiles.filter(p=>p.x>-100&&p.x<2200);
-
- if(player.y>H+80){
-  hurt();
-  player.y=350;
-  player.vy=0;
- }
-
- if(player.inv>0)player.inv--;
- if(player.superTime===0)player.superCooldown=0;
-
- camera=Math.max(0,Math.min(player.x-320,LEVEL_LENGTH-W));
-
- // Final da fase
- if(player.x>LEVEL_LENGTH-100){
-  if(phase<5){
-   phase++;
-   createLevel();
-   say("FASE "+phase+": "+themes[phase-1].name+"!");
-  }else if(boss.defeated){
-   gameState="victory";
-  }else{
-   player.x=LEVEL_LENGTH-180;
-   say("DERROTE TINOCADAS ANTES DE AVANÇAR!");
-  }
- }
-
- if(messageTimer>0)messageTimer--;
+ camera=Math.max(0,Math.min(levelWidth-W,player.x-W*.38));
+ for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=350*dt;p.life-=dt}
+ particles=particles.filter(p=>p.life>0);
+ updateHud();
 }
 
-function draw(){
- drawBackground();
- drawWorld();
- drawProjectiles();
- drawBoss();
+function rounded(x,y,w,h,r,color){
+ ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();
+}
+function drawBackground(){
+ let t=themes[level]||themes[4];
+ let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,t[0]);g.addColorStop(1,t[1]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ // Sol e nuvens
+ ctx.fillStyle="#fff2bf";ctx.globalAlpha=.8;ctx.beginPath();ctx.arc(W*.82,H*.2,45,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+ for(let i=0;i<7;i++){
+  let x=((i*270-camera*.22)%(W+300)+W+300)%(W+300)-100,y=70+(i%3)*65;
+  ctx.fillStyle="#ffffff99";ctx.beginPath();ctx.arc(x,y,24,0,Math.PI*2);ctx.arc(x+25,y-8,30,0,Math.PI*2);ctx.arc(x+53,y,22,0,Math.PI*2);ctx.fill();
+ }
+ // Colinas
+ for(let i=0;i<6;i++){
+  let x=((i*440-camera*.4)%(W+500)+W+500)%(W+500)-150;
+  ctx.fillStyle=i%2?"#4c9b79":"#5bb58a";
+  ctx.beginPath();ctx.ellipse(x,H-65,210,135,0,Math.PI,Math.PI*2);ctx.fill();
+ }
+}
+function drawWorld(){
+ ctx.save();ctx.translate(-camera,0);
+ // chão
+ for(const p of platforms){
+  ctx.fillStyle="#70452f";ctx.fillRect(p.x,p.y,p.w,p.h);
+  ctx.fillStyle="#55bd62";ctx.fillRect(p.x,p.y,p.w,12);
+  ctx.fillStyle="#ffffff19";
+  for(let x=p.x+12;x<p.x+p.w-5;x+=28)ctx.fillRect(x,p.y+25,12,5);
+ }
+ // decoração
+ for(let x=100;x<levelWidth;x+=230){
+  ctx.fillStyle="#246e4b";ctx.beginPath();ctx.arc(x,H-95,23,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#398e55";ctx.beginPath();ctx.arc(x-15,H-118,22,0,Math.PI*2);ctx.arc(x+15,H-119,22,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#795039";ctx.fillRect(x-5,H-92,10,22);
+ }
+ // comida
+ for(const f of foods)if(!f.taken){
+  ctx.save();ctx.translate(f.x,f.y);ctx.shadowColor="#ffe66d";ctx.shadowBlur=15;
+  ctx.fillStyle="#ffcf4d";ctx.beginPath();ctx.arc(0,0,13,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#fff6c5";ctx.beginPath();ctx.arc(-4,-5,4,0,Math.PI*2);ctx.fill();ctx.restore();
+ }
+ // marmita dourada
+ if(gold&&!gold.taken){
+  ctx.save();ctx.translate(gold.x,gold.y);ctx.shadowColor="#ffdb49";ctx.shadowBlur=25;
+  rounded(-24,-17,48,34,8,"#e8a52e");rounded(-27,-22,54,12,7,"#ffe16a");
+  ctx.fillStyle="#fff7c7";ctx.font="bold 19px Arial";ctx.textAlign="center";ctx.fillText("★",0,8);
+  ctx.restore();
+ }
+ if(enemy)drawTinoco(enemy.x,enemy.y,false);
+ if(boss)drawTinoco(boss.x,boss.y,true);
+ for(const q of projectiles){
+  ctx.shadowColor="#ffdc50";ctx.shadowBlur=18;ctx.fillStyle="#ffdf55";ctx.beginPath();ctx.arc(q.x,q.y,13,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+ }
  drawPG();
-
- // Aviso de laser
- if(boss.active&&boss.laserWarning>0){
-  ctx.fillStyle="#ff000066";
-  ctx.fillRect(0,boss.y+20,W,45);
-  ctx.fillStyle="white";
-  ctx.font="bold 22px Arial";
-  ctx.fillText("⚠ LASER CARREGANDO!",350,100);
- }
-
- // Laser
- if(boss.active&&boss.laserActive>0){
-  ctx.fillStyle="#ffec48";
-  ctx.fillRect(boss.x-camera+30,boss.y+35,
-  Math.max(0,500),15);
-  ctx.fillStyle="#fff";
-  ctx.fillRect(boss.x-camera+30,boss.y+39,500,6);
- }
-
- if(player.superTime>0){
-  ctx.fillStyle="#ffdf4d";
-  ctx.font="bold 22px Arial";
-  ctx.fillText("SUPER NA BOQUINHA!",30,40);
- }
-
- if(gameState==="dead"){
-  overlay("FIM DE JOGO","Tinocadas venceu desta vez!","TENTE NOVAMENTE");
- }
-
- if(gameState==="victory"){
-  overlay("VITÓRIA ÉPICA!","PG SALVOU O PINGUINHO!","🥩 MARMITA DE ALCATRA CONQUISTADA!");
- }
+ for(const p of particles){ctx.globalAlpha=Math.max(0,p.life*2);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}
+ ctx.restore();
 }
-
-function overlay(title,subtitle,extra){
- ctx.fillStyle="#090914dd";
- ctx.fillRect(0,0,W,H);
- ctx.textAlign="center";
- ctx.fillStyle="#ffdc68";
- ctx.font="bold 52px Arial";
- ctx.fillText(title,W/2,180);
- ctx.fillStyle="white";
- ctx.font="bold 26px Arial";
- ctx.fillText(subtitle,W/2,260);
- ctx.font="22px Arial";
- ctx.fillText(extra,W/2,320);
- ctx.font="55px Arial";
- ctx.fillText(gameState==="victory"?"🥩❤️":"💀",W/2,410);
- ctx.textAlign="left";
-}
-
-function loop(){
- update();
- draw();
- requestAnimationFrame(loop);
-}
-
-// Teclado
-window.addEventListener("keydown",e=>{
- let k=e.key.toLowerCase();
- keys[k]=true;
-
- if([" ","arrowup","arrowleft","arrowright"].includes(k))
- e.preventDefault();
-
- if(k==="x"){
-  activateSuper();
+function drawPG(){
+ let x=player.x,y=player.y;
+ ctx.save();ctx.translate(x+21,y+29);
+ if(player.face<0)ctx.scale(-1,1);
+ if(invuln>0&&Math.floor(invuln*12)%2===0)ctx.globalAlpha=.4;
+ if(superTime>0){ctx.shadowColor="#ffe66d";ctx.shadowBlur=25}
+ // pernas e tênis
+ rounded(-16,16,14,12,5,"#263b68");rounded(3,16,15,12,5,"#263b68");
+ rounded(-19,24,19,8,5,"#e84b52");rounded(1,24,20,8,5,"#e84b52");
+ // corpo
+ rounded(-20,-9,40,32,15,"#2f9b63");
+ // braços
+ ctx.fillStyle="#8c563d";ctx.beginPath();ctx.arc(-20,2,8,0,Math.PI*2);ctx.arc(20,2,8,0,Math.PI*2);ctx.fill();
+ // rosto
+ ctx.fillStyle="#a96c4b";ctx.beginPath();ctx.ellipse(0,-13,19,22,0,0,Math.PI*2);ctx.fill();
+ // cabelo
+ ctx.fillStyle="#241b1a";ctx.beginPath();ctx.arc(-5,-29,11,Math.PI,Math.PI*2);ctx.arc(7,-29,10,Math.PI,Math.PI*2);ctx.fill();
+ // boné
+ rounded(-18,-33,36,9,5,"#f0bd39");
+ // olhos e sorriso
+ ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(7,-15,4,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle="#211b20";ctx.beginPath();ctx.arc(8,-15,2,0,Math.PI*2);ctx.fill();
+ ctx.strokeStyle="#542b28";ctx.lineWidth=2;ctx.beginPath();ctx.arc(5,-6,7,.15,1.5);ctx.stroke();
+ if(superTime>0){
+  ctx.fillStyle="#fff0a5";ctx.beginPath();ctx.ellipse(25,-5,22,18,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#f28b49";ctx.beginPath();ctx.ellipse(30,-5,15,12,0,0,Math.PI*2);ctx.fill();
  }
-
- if(k==="r"&&(gameState==="dead"||gameState==="victory")){
-  restart();
+ ctx.restore();
+}
+function drawTinoco(x,y,big){
+ ctx.save();ctx.translate(x,y);
+ let s=big?1.65:1;ctx.scale(s,s);
+ // sombra
+ ctx.fillStyle="#11152b33";ctx.beginPath();ctx.ellipse(24,60,32,8,0,0,Math.PI*2);ctx.fill();
+ // pernas
+ rounded(5,42,13,18,5,"#49362f");rounded(27,42,13,18,5,"#49362f");
+ // corpo
+ rounded(0,5,48,43,14,"#9b633f");
+ // braços
+ ctx.fillStyle="#b47b51";ctx.beginPath();ctx.arc(-2,24,9,0,Math.PI*2);ctx.arc(49,24,9,0,Math.PI*2);ctx.fill();
+ // cabeça
+ ctx.fillStyle="#c18a5c";ctx.beginPath();ctx.arc(24,0,23,0,Math.PI*2);ctx.fill();
+ // cabelo
+ ctx.fillStyle="#39251e";ctx.beginPath();ctx.arc(18,-10,16,Math.PI,Math.PI*2);ctx.fill();
+ // olhos
+ ctx.fillStyle="white";ctx.beginPath();ctx.arc(16,0,5,0,Math.PI*2);ctx.arc(31,0,5,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle="#241b18";ctx.beginPath();ctx.arc(17,1,2.5,0,Math.PI*2);ctx.arc(32,1,2.5,0,Math.PI*2);ctx.fill();
+ ctx.strokeStyle="#542b28";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(15,13);ctx.lineTo(33,13);ctx.stroke();
+ // Vbanana
+ ctx.save();ctx.translate(43,29);ctx.rotate(-.5);rounded(0,-5,31,10,5,"#f4d447");ctx.fillStyle="#fff2a4";ctx.fillRect(24,-3,8,6);ctx.restore();
+ if(big){ctx.fillStyle="#fff";ctx.font="bold 12px Arial";ctx.fillText("TINOCO",2,-20)}
+ ctx.restore();
+}
+function draw(){
+ ctx.save();
+ if(shake>0)ctx.translate((Math.random()-.5)*10,(Math.random()-.5)*8);
+ drawBackground();drawWorld();
+ // saída
+ if(!boss){
+  let ex=levelWidth-55-camera;
+  ctx.fillStyle="#fff3b0";ctx.fillRect(ex,H-190,9,115);
+  ctx.fillStyle="#ff5d6c";ctx.beginPath();ctx.moveTo(ex+9,H-190);ctx.lineTo(ex+55,H-170);ctx.lineTo(ex+9,H-150);ctx.fill();
  }
-});
-
-window.addEventListener("keyup",e=>{
- keys[e.key.toLowerCase()]=false;
-});
-
-restart();
-loop();
+ ctx.restore();
+}
+function loop(ts){
+ let dt=(ts-lastTime)/1000||0;lastTime=ts;
+ update(dt);draw();requestAnimationFrame(loop);
+}
+document.getElementById("start").onclick=restart;
+document.getElementById("full").onclick=()=>{
+ if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();
+ else document.exitFullscreen?.();
+};
+document.getElementById("sound").onclick=()=>{soundOn=!soundOn;document.getElementById("sound").textContent=soundOn?"🔊 SOM":"🔇 SOM"};
+player={x:80,y:H-150,vx:0,vy:0,w:42,h:58,ground:false,face:1,hp:3};
+makeLevel(0);requestAnimationFrame(loop);
 </script>
 </body>
 </html>
