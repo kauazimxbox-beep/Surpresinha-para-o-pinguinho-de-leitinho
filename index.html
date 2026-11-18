@@ -1,297 +1,457 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Uma coisa para você, PG ❤️</title>
+<title>CASO 047 | Arquivo Confidencial</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&family=Oswald:wght@400;600;700&display=swap');
+
+:root {
+  --red: #c62828;
+  --dark: #101010;
+  --paper: #e5dfca;
+  --green: #54c78b;
 }
+
+* { box-sizing:border-box; margin:0; padding:0; }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #100914;
-    color: white;
-    text-align: center;
-    overflow-x: hidden;
+  background:var(--dark);
+  color:#eee;
+  font-family:'Share Tech Mono',monospace;
+  overflow-x:hidden;
 }
+
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:10;
+  opacity:.12;
+  background:repeating-linear-gradient(
+    transparent 0px, transparent 2px,
+    #fff 3px, transparent 4px
+  );
+}
+
+header {
+  position:fixed;
+  top:0;
+  width:100%;
+  padding:15px 7%;
+  background:#0a0a0aee;
+  border-bottom:1px solid #492020;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:20;
+}
+
+.logo {
+  color:var(--red);
+  font-family:Oswald;
+  font-size:21px;
+  font-weight:bold;
+}
+
+.status { color:var(--green); font-size:11px; }
 
 section {
-    min-height: 100vh;
-    padding: 35px 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 28px;
+  min-height:100vh;
+  padding:110px 8% 70px;
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  animation:appear .6s ease;
 }
 
-.intro {
-    background: radial-gradient(circle, #55203f, #100914 75%);
+section.active { display:flex; }
+
+@keyframes appear {
+  from {opacity:0; transform:translateY(15px)}
+  to {opacity:1; transform:translateY(0)}
 }
 
-.stage {
-    background: linear-gradient(145deg, #180d20, #39132f);
-}
-
-.final {
-    background: radial-gradient(circle, #a51951, #180914 75%);
+h1,h2 {
+  font-family:Oswald,sans-serif;
+  text-transform:uppercase;
 }
 
 h1 {
-    font-size: clamp(35px, 8vw, 65px);
-    line-height: 1.2;
+  font-size:clamp(45px,9vw,100px);
+  line-height:1;
 }
 
 h2 {
-    font-size: clamp(29px, 7vw, 55px);
-    line-height: 1.25;
-    max-width: 900px;
+  font-size:clamp(30px,5vw,55px);
+  margin-bottom:25px;
 }
 
-p {
-    font-size: clamp(19px, 4vw, 25px);
-    line-height: 1.6;
-    max-width: 700px;
-    color: #f7d6e7;
+.red { color:var(--red); }
+
+.subtitle {
+  color:#aaa;
+  margin:20px 0 35px;
+  line-height:1.8;
+  max-width:650px;
 }
 
 button {
-    padding: 18px 35px;
-    border: none;
-    border-radius: 50px;
-    background: #ff4385;
-    color: white;
-    font-size: 19px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 0 25px #ff4385;
-    transition: .3s;
+  padding:15px 25px;
+  border:1px solid var(--red);
+  background:transparent;
+  color:white;
+  font-family:inherit;
+  cursor:pointer;
+  transition:.3s;
+  margin:6px;
 }
 
 button:hover {
-    transform: scale(1.08);
+  background:var(--red);
+  transform:translateY(-3px);
 }
 
-.hidden {
-    display: none !important;
+.primary { background:var(--red); }
+
+.label {
+  color:var(--red);
+  letter-spacing:4px;
+  font-size:12px;
+  margin-bottom:20px;
 }
 
-.content {
-    animation: entrance .9s ease;
+.card {
+  border:1px solid #444;
+  background:#171717;
+  padding:25px;
+  margin:12px 0;
+  max-width:750px;
+  line-height:1.8;
 }
 
-@keyframes entrance {
-    from {
-        opacity: 0;
-        transform: translateY(35px) scale(.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+.card h3 {
+  color:var(--red);
+  font-family:Oswald;
+  font-size:23px;
+  margin-bottom:12px;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+  max-width:900px;
+}
+
+.stamp {
+  border:3px solid var(--red);
+  color:var(--red);
+  display:inline-block;
+  padding:8px 15px;
+  transform:rotate(-5deg);
+  font-family:Oswald;
+  font-size:22px;
+  margin:20px 0;
+}
+
+input {
+  padding:15px;
+  width:100%;
+  max-width:400px;
+  background:#222;
+  border:1px solid #555;
+  color:white;
+  font-family:inherit;
+  margin:15px 0;
 }
 
 .progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 5px;
-    width: 0%;
-    background: #ff4385;
-    z-index: 10;
-    transition: width .5s;
+  height:4px;
+  background:#333;
+  position:fixed;
+  top:53px;
+  left:0;
+  width:100%;
+  z-index:19;
 }
 
-.heart {
-    position: fixed;
-    top: -40px;
-    z-index: 5;
-    pointer-events: none;
-    animation: fall linear forwards;
+#bar {
+  height:100%;
+  width:0%;
+  background:var(--red);
+  transition:.5s;
 }
 
-@keyframes fall {
-    to {
-        transform: translateY(110vh) rotate(360deg);
-        opacity: 0;
-    }
+.paper {
+  background:var(--paper);
+  color:#242018;
+  padding:30px;
+  max-width:650px;
+  font-family:'Special Elite',serif;
+  line-height:2;
+  transform:rotate(-1deg);
 }
 
-.love {
-    font-size: clamp(48px, 12vw, 100px);
-    color: #ff7cac;
-    text-shadow: 0 0 30px #ff4385;
-    animation: pulse 1.2s infinite alternate;
+.paper h3 {
+  font-size:25px;
+  margin-bottom:15px;
 }
 
-@keyframes pulse {
-    to { transform: scale(1.08); }
+footer {
+  color:#666;
+  font-size:11px;
+  margin-top:35px;
 }
 
-.reveal {
-    font-size: clamp(37px, 9vw, 80px);
-    color: #ffdf69;
-    text-shadow: 0 0 25px #ff9c00;
+#terminal {
+  color:var(--green);
+  min-height:100px;
+  line-height:2;
+}
+
+@media(max-width:600px) {
+  header {padding:12px 5%}
+  section {padding:100px 6% 50px}
+  .logo {font-size:17px}
+  .status {font-size:9px}
 }
 </style>
 </head>
 
 <body>
 
-<div class="progress" id="progress"></div>
+<header>
+  <div class="logo">POLÍCIA // ARQUIVO 047</div>
+  <div class="status">● SISTEMA ATIVO</div>
+</header>
 
-<!-- ETAPA 1 -->
-<section class="intro" id="step0">
-    <div class="content">
-        <p>📩 NOTIFICAÇÃO ESPECIAL</p>
-        <h1>PG, temos que conversar...</h1>
-        <p>Preparei uma coisa muito importante para você.</p>
-        <br>
-        <button onclick="next(1)">O que aconteceu? 👀</button>
-    </div>
+<div class="progress"><div id="bar"></div></div>
+
+<!-- TELA 1 -->
+<section id="s1" class="active">
+  <div class="label">DOCUMENTO ULTRASSECRETO // 047-A</div>
+  <h1>CASO <span class="red">047</span></h1>
+  <h2>O MISTÉRIO DO<br>DOUTOR NA BOQUINHA</h2>
+  <p class="subtitle">
+    Um desaparecimento inexplicável. Um suspeito improvável.
+    Uma investigação que ninguém pediu, mas que precisa ser concluída.
+  </p>
+  <div class="stamp">CONFIDENCIAL</div>
+  <button class="primary" onclick="go(2)">ACESSAR INVESTIGAÇÃO →</button>
+  <footer>AVISO: HISTÓRIA FICTÍCIA. TODOS OS EVENTOS SÃO UMA BRINCADEIRA.</footer>
 </section>
 
-<!-- ETAPA 2 -->
-<section class="stage hidden" id="step1">
-    <div class="content">
-        <h2>Primeiramente...</h2>
-        <p>Quero que você saiba que essa mensagem foi preparada com muito carinho.</p>
-        <p>Não é qualquer coisa. É algo que vem do fundo do coração.</p>
-        <button onclick="next(2)">Pode continuar ❤️</button>
-    </div>
+<!-- TELA 2 -->
+<section id="s2">
+  <div class="label">RELATÓRIO INICIAL</div>
+  <h2>O QUE ACONTECEU?</h2>
+  <div class="card">
+    <h3>18 DE NOVEMBRO // 23:47</h3>
+    Naquela noite, Doutor Na Boquinha foi visto pela última vez.
+    Depois disso, silêncio absoluto.
+    Nenhuma mensagem, nenhuma explicação e nenhuma notícia.
+  </div>
+  <div class="card">
+    <h3>O DETALHE MAIS ESTRANHO</h3>
+    Uma testemunha afirmou ter visto Davi Macedo nas proximidades.
+    Coincidência? Talvez. Mas a investigação não acredita em coincidências.
+  </div>
+  <button onclick="go(3)">CONTINUAR INVESTIGAÇÃO →</button>
 </section>
 
-<!-- ETAPA 3 -->
-<section class="stage hidden" id="step2">
-    <div class="content">
-        <h2>Você é uma pessoa muito especial.</h2>
-        <p>Apesar das nossas brincadeiras, das conversas e de todas as nossas histórias...</p>
-        <p>Existe algo que preciso dizer.</p>
-        <button onclick="next(3)">Estou preparado 🥹</button>
-    </div>
+<!-- TELA 3 -->
+<section id="s3">
+  <div class="label">ARQUIVO DE SUSPEITOS</div>
+  <h2>FICHA DO INVESTIGADO</h2>
+  <div class="paper">
+    <h3>REGISTRO DE SUSPEITO</h3>
+    NOME: DAVI MACEDO<br>
+    CODINOME: O INEXPLICÁVEL<br>
+    NÍVEL DE MISTÉRIO: EXTREMAMENTE ELEVADO<br>
+    PRINCIPAL SUSPEITA: ENVOLVIMENTO NO CASO 047<br>
+    PERSONALIDADE: AINDA SOB INVESTIGAÇÃO<br>
+    <br>
+    OBSERVAÇÃO: O indivíduo ainda não apresentou uma explicação convincente.
+  </div>
+  <div class="stamp">SUSPEITO Nº 01</div>
+  <button onclick="go(4)">EXAMINAR EVIDÊNCIAS →</button>
 </section>
 
-<!-- ETAPA 4 -->
-<section class="stage hidden" id="step3">
-    <div class="content">
-        <h2>Eu pensei muito antes de fazer isso...</h2>
-        <p>Foram noites de reflexão, momentos de dúvida e muita coragem.</p>
-        <p>Mas chegou a hora.</p>
-        <button onclick="next(4)">FALA LOGO KAUÃ 😭</button>
+<!-- TELA 4 -->
+<section id="s4">
+  <div class="label">CENTRAL DE EVIDÊNCIAS</div>
+  <h2>AS PROVAS DO CASO</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>PROVA 01</h3>
+      Uma conversa misteriosa entre os envolvidos.
+      <br><small>CLASSIFICAÇÃO: SUSPEITA</small>
     </div>
+    <div class="card">
+      <h3>PROVA 02</h3>
+      Davi estava presente em circunstâncias extremamente questionáveis.
+      <br><small>CLASSIFICAÇÃO: SUSPEITA</small>
+    </div>
+    <div class="card">
+      <h3>PROVA 03</h3>
+      Uma testemunha declarou: "Eu sabia que isso ia acontecer".
+      <br><small>CLASSIFICAÇÃO: SIGILOSA</small>
+    </div>
+  </div>
+  <p class="subtitle">
+    Nenhuma dessas evidências comprova qualquer crime.
+    Mas o nível de fofoca já ultrapassou todos os limites.
+  </p>
+  <button onclick="go(5)">INTERROGAR DAVI →</button>
 </section>
 
-<!-- ETAPA 5 -->
-<section class="stage hidden" id="step4">
-    <div class="content">
-        <h2>PG...</h2>
-        <p>Independentemente do que aconteça, quero que você saiba de uma coisa:</p>
-        <h2>VOCÊ É IMPORTANTE PARA MIM.</h2>
-        <button onclick="next(5)">Estou emocionado...</button>
+<!-- TELA 5 -->
+<section id="s5">
+  <div class="label">SALA DE INTERROGATÓRIO</div>
+  <h2>DAVÍ, PRECISAMOS CONVERSAR.</h2>
+  <div class="card">
+    <h3>PERGUNTA Nº 01</h3>
+    Onde você estava na noite do desaparecimento do Doutor Na Boquinha?
+    <div>
+      <button onclick="answer('A resposta foi registrada. Muito conveniente...')">Em casa.</button>
+      <button onclick="answer('Resposta suspeita. O investigador anotou tudo.')">Não lembro.</button>
+      <button onclick="answer('O silêncio também foi registrado no relatório.')">Prefiro ficar calado.</button>
     </div>
+    <p id="answer" class="subtitle"></p>
+  </div>
+  <div class="card">
+    <h3>PERGUNTA Nº 02</h3>
+    Você conhece o Doutor Na Boquinha?
+    <button onclick="answer('Interessante... conhecimento confirmado.')">Sim.</button>
+    <button onclick="answer('NEGAR O CONHECIMENTO? Isso será investigado.')">Não.</button>
+  </div>
+  <button onclick="go(6)">ENCERRAR INTERROGATÓRIO →</button>
 </section>
 
-<!-- ETAPA 6 -->
-<section class="stage hidden" id="step5">
-    <div class="content">
-        <h2>Chegou o grande momento.</h2>
-        <p>Não existem mais palavras para explicar o que sinto.</p>
-        <p>É só clicar e descobrir.</p>
-        <button onclick="next(6)">REVELAR SENTIMENTOS ❤️</button>
-    </div>
+<!-- TELA 6 -->
+<section id="s6">
+  <div class="label">DEPOIMENTO SIGILOSO</div>
+  <h2>UMA NOVA TESTEMUNHA.</h2>
+  <div class="card">
+    <p id="terminal"></p>
+  </div>
+  <button onclick="reveal()">REVELAR DEPOIMENTO</button>
+  <button onclick="go(7)">CONTINUAR →</button>
 </section>
 
-<!-- DECLARAÇÃO -->
-<section class="final hidden" id="step6">
-    <div class="content">
-        <p>DE TODO O MEU CORAÇÃO...</p>
-        <h1 class="love">PG EU TE AMO ❤️</h1>
-        <p>Você é especial demais, meu parceiro!</p>
-        <button onclick="next(7)">Tenho mais uma coisa a dizer...</button>
-    </div>
+<!-- TELA 7 -->
+<section id="s7">
+  <div class="label">TRIBUNAL DO CASO 047</div>
+  <h2>CHEGOU A HORA.</h2>
+  <p class="subtitle">
+    Após analisar todos os documentos, você foi escolhido para decidir
+    o destino do principal suspeito.
+  </p>
+  <div class="card">
+    <h3>QUAL É O SEU VEREDITO?</h3>
+    <button onclick="verdict('INOCENTE')">INOCENTE</button>
+    <button onclick="verdict('CULPADO')">CULPADO</button>
+    <button onclick="verdict('PRECISAMOS DE MAIS PROVAS')">PRECISAMOS DE MAIS PROVAS</button>
+  </div>
 </section>
 
-<!-- PLOT TWIST -->
-<section class="intro hidden" id="step7">
-    <div class="content">
-        <p>MAS ESPERA...</p>
-        <h1>Antes de terminar...</h1>
-        <p>Tem uma coisa que está entalada na minha garganta.</p>
-        <button onclick="next(8)">O que foi? 😳</button>
-    </div>
+<!-- TELA 8 -->
+<section id="s8">
+  <div class="label">RESULTADO DA INVESTIGAÇÃO</div>
+  <h2 id="resultTitle">CASO ENCERRADO.</h2>
+  <div class="stamp">ARQUIVO FINAL</div>
+  <div class="card">
+    <h3 id="resultText"></h3>
+    <p>
+      Depois de muitas perguntas, documentos e evidências questionáveis,
+      uma coisa ficou clara:
+    </p>
+    <br>
+    <h2 class="red">NINGUÉM ESTAVA PREPARADO PARA ISSO.</h2>
+  </div>
+  <button class="primary" onclick="go(9)">ABRIR DOCUMENTO FINAL →</button>
 </section>
 
-<!-- REVELAÇÃO -->
-<section class="final hidden" id="step8">
-    <div class="content">
-        <p>DEPOIS DE TUDO QUE PASSAMOS...</p>
-        <h1 class="reveal">EU SEI QUE VOCÊ ME TRAIU COM O MANEL 💀</h1>
-        <p>EU TENHO PROVAS, PG.</p>
-        <p>O amor acabou. A investigação começou. 🕵️</p>
-        <button onclick="restart()">Rever essa humilhação 😂</button>
-    </div>
+<!-- TELA 9 -->
+<section id="s9">
+  <div class="label">ÚLTIMO DOCUMENTO // ACESSO LIBERADO</div>
+  <h1>CASO <span class="red">047</span></h1>
+  <h2>A VERDADE...</h2>
+  <div class="paper">
+    <h3>RELATÓRIO DEFINITIVO</h3>
+    Após uma investigação de proporções completamente desnecessárias,
+    a equipe chegou a uma conclusão:
+    <br><br>
+    Davi Macedo foi oficialmente condenado a...
+    <br><br>
+    <strong>CONTINUAR SENDO O DAVI MACEDO.</strong>
+    <br><br>
+    Doutor Na Boquinha permanece como o maior mistério desta história.
+    <br><br>
+    ASSINADO: DEPARTAMENTO DE INVESTIGAÇÕES ABSURDAS.
+  </div>
+  <div class="stamp">CASO ENCERRADO</div>
+  <button onclick="location.reload()">REINICIAR INVESTIGAÇÃO</button>
 </section>
 
 <script>
-let current = 0;
+function go(n) {
+  document.querySelectorAll('section').forEach(s => {
+    s.classList.remove('active');
+  });
 
-function next(number) {
-    document.getElementById("step" + current)
-        .classList.add("hidden");
+  document.getElementById('s'+n).classList.add('active');
 
-    current = number;
+  document.getElementById('bar').style.width =
+    ((n-1)/8*100)+'%';
 
-    const section = document.getElementById("step" + current);
-    section.classList.remove("hidden");
-
-    section.querySelector(".content").style.animation = "none";
-    void section.offsetWidth;
-    section.querySelector(".content").style.animation = "entrance .9s ease";
-
-    document.getElementById("progress").style.width =
-        (current / 8 * 100) + "%";
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    if (current >= 6) {
-        startHearts();
-    }
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function startHearts() {
-    for (let i = 0; i < 20; i++) {
-        setTimeout(() => {
-            const heart = document.createElement("div");
-            heart.className = "heart";
-            heart.textContent = ["❤️", "💗", "💕", "💀"][Math.floor(Math.random()*4)];
-            heart.style.left = Math.random() * 100 + "vw";
-            heart.style.fontSize = (20 + Math.random() * 25) + "px";
-            heart.style.animationDuration = (3 + Math.random() * 4) + "s";
-
-            document.body.appendChild(heart);
-
-            setTimeout(() => heart.remove(), 7500);
-        }, i * 100);
-    }
+function answer(text) {
+  document.getElementById('answer').textContent = text;
 }
 
-function restart() {
-    document.getElementById("step" + current)
-        .classList.add("hidden");
+function reveal() {
+  const messages = [
+    "INICIANDO LEITURA DO DEPOIMENTO...",
+    "A testemunha pediu anonimato.",
+    "Ela afirmou que conhece Davi há bastante tempo.",
+    "E disse que nunca viu alguém tão envolvido em uma investigação tão absurda.",
+    "FIM DO DEPOIMENTO."
+  ];
 
-    current = 0;
+  let i=0;
+  const terminal=document.getElementById('terminal');
+  terminal.textContent="";
 
-    document.getElementById("step0")
-        .classList.remove("hidden");
+  const timer=setInterval(()=>{
+    if(i>=messages.length){
+      clearInterval(timer);
+      return;
+    }
+    terminal.textContent+=messages[i]+"\n";
+    i++;
+  },1000);
+}
 
-    document.getElementById("progress").style.width = "0%";
+function verdict(choice) {
+  document.getElementById('resultTitle').textContent =
+    'VEREDITO: '+choice;
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  document.getElementById('resultText').textContent =
+    choice==='CULPADO'
+    ? 'A BANCA DECIDIU! Davi foi considerado culpado... de ser suspeito demais.'
+    : choice==='INOCENTE'
+    ? 'Davi foi liberado! Mas continuará sendo observado pela equipe.'
+    : 'A investigação continuará aberta até segunda ordem.';
+
+  go(8);
 }
 </script>
 
