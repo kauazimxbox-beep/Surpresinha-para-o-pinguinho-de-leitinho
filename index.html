@@ -4,456 +4,629 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CASO 047 | Arquivo Confidencial</title>
-
+<title>PG: A Última Marmita</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&family=Oswald:wght@400;600;700&display=swap');
-
-:root {
-  --red: #c62828;
-  --dark: #101010;
-  --paper: #e5dfca;
-  --green: #54c78b;
+*{box-sizing:border-box;margin:0}
+body{
+ background:#111426;color:white;font-family:Arial;
+ display:flex;flex-direction:column;align-items:center;
+ padding:15px;min-height:100vh
 }
-
-* { box-sizing:border-box; margin:0; padding:0; }
-
-body {
-  background:var(--dark);
-  color:#eee;
-  font-family:'Share Tech Mono',monospace;
-  overflow-x:hidden;
+h1{color:#ffda69;text-align:center;margin:12px}
+p{color:#bbb;text-align:center;margin:8px}
+.game{
+ width:min(100%,960px);border:4px solid #ffda69;
+ border-radius:12px;overflow:hidden;background:#151b30
 }
-
-body::before {
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:10;
-  opacity:.12;
-  background:repeating-linear-gradient(
-    transparent 0px, transparent 2px,
-    #fff 3px, transparent 4px
-  );
+canvas{width:100%;display:block;image-rendering:pixelated}
+.hud{
+ display:flex;justify-content:space-around;flex-wrap:wrap;
+ gap:10px;padding:12px;background:#202942;font-weight:bold
 }
-
-header {
-  position:fixed;
-  top:0;
-  width:100%;
-  padding:15px 7%;
-  background:#0a0a0aee;
-  border-bottom:1px solid #492020;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:20;
+#message{color:#ffdf76;min-height:28px;margin:12px;text-align:center}
+button{
+ border:0;border-radius:8px;background:#ffda69;
+ padding:12px 20px;font-weight:bold;cursor:pointer;margin:8px
 }
-
-.logo {
-  color:var(--red);
-  font-family:Oswald;
-  font-size:21px;
-  font-weight:bold;
-}
-
-.status { color:var(--green); font-size:11px; }
-
-section {
-  min-height:100vh;
-  padding:110px 8% 70px;
-  display:none;
-  flex-direction:column;
-  justify-content:center;
-  animation:appear .6s ease;
-}
-
-section.active { display:flex; }
-
-@keyframes appear {
-  from {opacity:0; transform:translateY(15px)}
-  to {opacity:1; transform:translateY(0)}
-}
-
-h1,h2 {
-  font-family:Oswald,sans-serif;
-  text-transform:uppercase;
-}
-
-h1 {
-  font-size:clamp(45px,9vw,100px);
-  line-height:1;
-}
-
-h2 {
-  font-size:clamp(30px,5vw,55px);
-  margin-bottom:25px;
-}
-
-.red { color:var(--red); }
-
-.subtitle {
-  color:#aaa;
-  margin:20px 0 35px;
-  line-height:1.8;
-  max-width:650px;
-}
-
-button {
-  padding:15px 25px;
-  border:1px solid var(--red);
-  background:transparent;
-  color:white;
-  font-family:inherit;
-  cursor:pointer;
-  transition:.3s;
-  margin:6px;
-}
-
-button:hover {
-  background:var(--red);
-  transform:translateY(-3px);
-}
-
-.primary { background:var(--red); }
-
-.label {
-  color:var(--red);
-  letter-spacing:4px;
-  font-size:12px;
-  margin-bottom:20px;
-}
-
-.card {
-  border:1px solid #444;
-  background:#171717;
-  padding:25px;
-  margin:12px 0;
-  max-width:750px;
-  line-height:1.8;
-}
-
-.card h3 {
-  color:var(--red);
-  font-family:Oswald;
-  font-size:23px;
-  margin-bottom:12px;
-}
-
-.grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-  max-width:900px;
-}
-
-.stamp {
-  border:3px solid var(--red);
-  color:var(--red);
-  display:inline-block;
-  padding:8px 15px;
-  transform:rotate(-5deg);
-  font-family:Oswald;
-  font-size:22px;
-  margin:20px 0;
-}
-
-input {
-  padding:15px;
-  width:100%;
-  max-width:400px;
-  background:#222;
-  border:1px solid #555;
-  color:white;
-  font-family:inherit;
-  margin:15px 0;
-}
-
-.progress {
-  height:4px;
-  background:#333;
-  position:fixed;
-  top:53px;
-  left:0;
-  width:100%;
-  z-index:19;
-}
-
-#bar {
-  height:100%;
-  width:0%;
-  background:var(--red);
-  transition:.5s;
-}
-
-.paper {
-  background:var(--paper);
-  color:#242018;
-  padding:30px;
-  max-width:650px;
-  font-family:'Special Elite',serif;
-  line-height:2;
-  transform:rotate(-1deg);
-}
-
-.paper h3 {
-  font-size:25px;
-  margin-bottom:15px;
-}
-
-footer {
-  color:#666;
-  font-size:11px;
-  margin-top:35px;
-}
-
-#terminal {
-  color:var(--green);
-  min-height:100px;
-  line-height:2;
-}
-
-@media(max-width:600px) {
-  header {padding:12px 5%}
-  section {padding:100px 6% 50px}
-  .logo {font-size:17px}
-  .status {font-size:9px}
-}
+.controls{text-align:center;color:#bbb;line-height:2;margin:10px}
 </style>
 </head>
-
 <body>
 
-<header>
-  <div class="logo">POLÍCIA // ARQUIVO 047</div>
-  <div class="status">● SISTEMA ATIVO</div>
-</header>
+<h1>🥩 PG: A ÚLTIMA MARMITA</h1>
+<p>Uma aventura épica contra Tinocadas Malvadeza</p>
 
-<div class="progress"><div id="bar"></div></div>
+<div class="game">
+<canvas id="game" width="960" height="540"></canvas>
+<div class="hud">
+ <span>❤️ <b id="lives">3</b></span>
+ <span>🥩 <b id="food">0</b>/5</span>
+ <span>⭐ <b id="score">0</b></span>
+ <span>🌎 Fase <b id="phase">1</b>/5</span>
+</div>
+</div>
 
-<!-- TELA 1 -->
-<section id="s1" class="active">
-  <div class="label">DOCUMENTO ULTRASSECRETO // 047-A</div>
-  <h1>CASO <span class="red">047</span></h1>
-  <h2>O MISTÉRIO DO<br>DOUTOR NA BOQUINHA</h2>
-  <p class="subtitle">
-    Um desaparecimento inexplicável. Um suspeito improvável.
-    Uma investigação que ninguém pediu, mas que precisa ser concluída.
-  </p>
-  <div class="stamp">CONFIDENCIAL</div>
-  <button class="primary" onclick="go(2)">ACESSAR INVESTIGAÇÃO →</button>
-  <footer>AVISO: HISTÓRIA FICTÍCIA. TODOS OS EVENTOS SÃO UMA BRINCADEIRA.</footer>
-</section>
+<div id="message">Colete 5 marmitas para despertar o Super Na Boquinha!</div>
+<button onclick="restart()">RECOMEÇAR JOGO</button>
 
-<!-- TELA 2 -->
-<section id="s2">
-  <div class="label">RELATÓRIO INICIAL</div>
-  <h2>O QUE ACONTECEU?</h2>
-  <div class="card">
-    <h3>18 DE NOVEMBRO // 23:47</h3>
-    Naquela noite, Doutor Na Boquinha foi visto pela última vez.
-    Depois disso, silêncio absoluto.
-    Nenhuma mensagem, nenhuma explicação e nenhuma notícia.
-  </div>
-  <div class="card">
-    <h3>O DETALHE MAIS ESTRANHO</h3>
-    Uma testemunha afirmou ter visto Davi Macedo nas proximidades.
-    Coincidência? Talvez. Mas a investigação não acredita em coincidências.
-  </div>
-  <button onclick="go(3)">CONTINUAR INVESTIGAÇÃO →</button>
-</section>
-
-<!-- TELA 3 -->
-<section id="s3">
-  <div class="label">ARQUIVO DE SUSPEITOS</div>
-  <h2>FICHA DO INVESTIGADO</h2>
-  <div class="paper">
-    <h3>REGISTRO DE SUSPEITO</h3>
-    NOME: DAVI MACEDO<br>
-    CODINOME: O INEXPLICÁVEL<br>
-    NÍVEL DE MISTÉRIO: EXTREMAMENTE ELEVADO<br>
-    PRINCIPAL SUSPEITA: ENVOLVIMENTO NO CASO 047<br>
-    PERSONALIDADE: AINDA SOB INVESTIGAÇÃO<br>
-    <br>
-    OBSERVAÇÃO: O indivíduo ainda não apresentou uma explicação convincente.
-  </div>
-  <div class="stamp">SUSPEITO Nº 01</div>
-  <button onclick="go(4)">EXAMINAR EVIDÊNCIAS →</button>
-</section>
-
-<!-- TELA 4 -->
-<section id="s4">
-  <div class="label">CENTRAL DE EVIDÊNCIAS</div>
-  <h2>AS PROVAS DO CASO</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>PROVA 01</h3>
-      Uma conversa misteriosa entre os envolvidos.
-      <br><small>CLASSIFICAÇÃO: SUSPEITA</small>
-    </div>
-    <div class="card">
-      <h3>PROVA 02</h3>
-      Davi estava presente em circunstâncias extremamente questionáveis.
-      <br><small>CLASSIFICAÇÃO: SUSPEITA</small>
-    </div>
-    <div class="card">
-      <h3>PROVA 03</h3>
-      Uma testemunha declarou: "Eu sabia que isso ia acontecer".
-      <br><small>CLASSIFICAÇÃO: SIGILOSA</small>
-    </div>
-  </div>
-  <p class="subtitle">
-    Nenhuma dessas evidências comprova qualquer crime.
-    Mas o nível de fofoca já ultrapassou todos os limites.
-  </p>
-  <button onclick="go(5)">INTERROGAR DAVI →</button>
-</section>
-
-<!-- TELA 5 -->
-<section id="s5">
-  <div class="label">SALA DE INTERROGATÓRIO</div>
-  <h2>DAVÍ, PRECISAMOS CONVERSAR.</h2>
-  <div class="card">
-    <h3>PERGUNTA Nº 01</h3>
-    Onde você estava na noite do desaparecimento do Doutor Na Boquinha?
-    <div>
-      <button onclick="answer('A resposta foi registrada. Muito conveniente...')">Em casa.</button>
-      <button onclick="answer('Resposta suspeita. O investigador anotou tudo.')">Não lembro.</button>
-      <button onclick="answer('O silêncio também foi registrado no relatório.')">Prefiro ficar calado.</button>
-    </div>
-    <p id="answer" class="subtitle"></p>
-  </div>
-  <div class="card">
-    <h3>PERGUNTA Nº 02</h3>
-    Você conhece o Doutor Na Boquinha?
-    <button onclick="answer('Interessante... conhecimento confirmado.')">Sim.</button>
-    <button onclick="answer('NEGAR O CONHECIMENTO? Isso será investigado.')">Não.</button>
-  </div>
-  <button onclick="go(6)">ENCERRAR INTERROGATÓRIO →</button>
-</section>
-
-<!-- TELA 6 -->
-<section id="s6">
-  <div class="label">DEPOIMENTO SIGILOSO</div>
-  <h2>UMA NOVA TESTEMUNHA.</h2>
-  <div class="card">
-    <p id="terminal"></p>
-  </div>
-  <button onclick="reveal()">REVELAR DEPOIMENTO</button>
-  <button onclick="go(7)">CONTINUAR →</button>
-</section>
-
-<!-- TELA 7 -->
-<section id="s7">
-  <div class="label">TRIBUNAL DO CASO 047</div>
-  <h2>CHEGOU A HORA.</h2>
-  <p class="subtitle">
-    Após analisar todos os documentos, você foi escolhido para decidir
-    o destino do principal suspeito.
-  </p>
-  <div class="card">
-    <h3>QUAL É O SEU VEREDITO?</h3>
-    <button onclick="verdict('INOCENTE')">INOCENTE</button>
-    <button onclick="verdict('CULPADO')">CULPADO</button>
-    <button onclick="verdict('PRECISAMOS DE MAIS PROVAS')">PRECISAMOS DE MAIS PROVAS</button>
-  </div>
-</section>
-
-<!-- TELA 8 -->
-<section id="s8">
-  <div class="label">RESULTADO DA INVESTIGAÇÃO</div>
-  <h2 id="resultTitle">CASO ENCERRADO.</h2>
-  <div class="stamp">ARQUIVO FINAL</div>
-  <div class="card">
-    <h3 id="resultText"></h3>
-    <p>
-      Depois de muitas perguntas, documentos e evidências questionáveis,
-      uma coisa ficou clara:
-    </p>
-    <br>
-    <h2 class="red">NINGUÉM ESTAVA PREPARADO PARA ISSO.</h2>
-  </div>
-  <button class="primary" onclick="go(9)">ABRIR DOCUMENTO FINAL →</button>
-</section>
-
-<!-- TELA 9 -->
-<section id="s9">
-  <div class="label">ÚLTIMO DOCUMENTO // ACESSO LIBERADO</div>
-  <h1>CASO <span class="red">047</span></h1>
-  <h2>A VERDADE...</h2>
-  <div class="paper">
-    <h3>RELATÓRIO DEFINITIVO</h3>
-    Após uma investigação de proporções completamente desnecessárias,
-    a equipe chegou a uma conclusão:
-    <br><br>
-    Davi Macedo foi oficialmente condenado a...
-    <br><br>
-    <strong>CONTINUAR SENDO O DAVI MACEDO.</strong>
-    <br><br>
-    Doutor Na Boquinha permanece como o maior mistério desta história.
-    <br><br>
-    ASSINADO: DEPARTAMENTO DE INVESTIGAÇÕES ABSURDAS.
-  </div>
-  <div class="stamp">CASO ENCERRADO</div>
-  <button onclick="location.reload()">REINICIAR INVESTIGAÇÃO</button>
-</section>
+<div class="controls">
+ <b>CONTROLES</b><br>
+ A/D ou ←/→ : Movimentar PG<br>
+ W / ↑ / ESPAÇO : Pular<br>
+ X : Ativar Super Na Boquinha (com 5 marmitas)<br>
+ <br>Desvie dos ataques e não deixe Tinocadas alcançar você!
+</div>
 
 <script>
-function go(n) {
-  document.querySelectorAll('section').forEach(s => {
-    s.classList.remove('active');
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+const W=960,H=540;
+
+const keys={};
+let player,phase,food,score,lives,camera;
+let platforms,meals,hazards,projectiles,boss;
+let frame=0,gameState="playing";
+let messageTimer=0;
+
+const themes=[
+ {name:"Floresta da Fome",sky:"#80c9ef",ground:"#527b39",platform:"#80532e"},
+ {name:"Cidade das Batatas",sky:"#ffb879",ground:"#72564b",platform:"#a17a5b"},
+ {name:"Deserto do Bolo Banana",sky:"#f6c65c",ground:"#c38a43",platform:"#9a6537"},
+ {name:"Fortaleza da Vbanana",sky:"#41355e",ground:"#38334d",platform:"#71618e"},
+ {name:"Castelo da Malvadeza",sky:"#261b3d",ground:"#36243c",platform:"#75506e"}
+];
+
+const LEVEL_LENGTH=2100;
+
+function say(t){
+ document.getElementById("message").textContent=t;
+ messageTimer=150;
+}
+
+function restart(){
+ phase=1;
+ food=0;
+ score=0;
+ lives=3;
+ frame=0;
+ gameState="playing";
+ camera=0;
+ createLevel();
+ say("A aventura começou! PG precisa salvar seu amigo!");
+}
+
+function createLevel(){
+ player={
+  x:70,y:380,w:42,h:55,
+  vx:0,vy:0,speed:4.5,
+  grounded:false,inv:0,
+  facing:1,superTime:0,
+  superCooldown:0
+ };
+
+ platforms=[
+  {x:0,y:490,w:550,h:50},
+  {x:630,y:490,w:500,h:50},
+  {x:1220,y:490,w:500,h:50},
+  {x:1800,y:490,w:350,h:50}
+ ];
+
+ // Plataformas suspensas
+ for(let i=0;i<7;i++){
+  platforms.push({
+   x:200+i*265,
+   y:370-(i%3)*65,
+   w:125,h:18
   });
+ }
 
-  document.getElementById('s'+n).classList.add('active');
+ meals=[];
+ for(let i=0;i<13;i++){
+  meals.push({
+   x:220+i*145,
+   y:330-(i%3)*45,
+   taken:false
+  });
+ }
 
-  document.getElementById('bar').style.width =
-    ((n-1)/8*100)+'%';
+ hazards=[];
+ for(let i=0;i<10;i++){
+  hazards.push({
+   x:450+i*175,y:466,w:35,h:24,
+   type:i%3===0?"banana":"spike"
+  });
+ }
 
-  window.scrollTo({top:0,behavior:'smooth'});
+ projectiles=[];
+
+ boss={
+  x:1900,y:410,w:54,h:70,
+  hp:phase===5?5:0,
+  teleport:150,
+  attack:100,
+  laser:240,
+  laserWarning:0,
+  laserActive:0,
+  active:phase===5,
+  defeated:false
+ };
+
+ camera=0;
+ updateHUD();
 }
 
-function answer(text) {
-  document.getElementById('answer').textContent = text;
+function updateHUD(){
+ document.getElementById("lives").textContent=lives;
+ document.getElementById("food").textContent=food;
+ document.getElementById("score").textContent=score;
+ document.getElementById("phase").textContent=phase;
 }
 
-function reveal() {
-  const messages = [
-    "INICIANDO LEITURA DO DEPOIMENTO...",
-    "A testemunha pediu anonimato.",
-    "Ela afirmou que conhece Davi há bastante tempo.",
-    "E disse que nunca viu alguém tão envolvido em uma investigação tão absurda.",
-    "FIM DO DEPOIMENTO."
-  ];
-
-  let i=0;
-  const terminal=document.getElementById('terminal');
-  terminal.textContent="";
-
-  const timer=setInterval(()=>{
-    if(i>=messages.length){
-      clearInterval(timer);
-      return;
-    }
-    terminal.textContent+=messages[i]+"\n";
-    i++;
-  },1000);
+function rect(x,y,w,h,color){
+ ctx.fillStyle=color;
+ ctx.fillRect(x-camera,y,w,h);
 }
 
-function verdict(choice) {
-  document.getElementById('resultTitle').textContent =
-    'VEREDITO: '+choice;
-
-  document.getElementById('resultText').textContent =
-    choice==='CULPADO'
-    ? 'A BANCA DECIDIU! Davi foi considerado culpado... de ser suspeito demais.'
-    : choice==='INOCENTE'
-    ? 'Davi foi liberado! Mas continuará sendo observado pela equipe.'
-    : 'A investigação continuará aberta até segunda ordem.';
-
-  go(8);
+function drawText(t,x,y,size,color="white"){
+ ctx.fillStyle=color;
+ ctx.font=`bold ${size}px Arial`;
+ ctx.fillText(t,x-camera,y);
 }
+
+function drawBackground(){
+ let theme=themes[phase-1];
+ ctx.fillStyle=theme.sky;
+ ctx.fillRect(0,0,W,H);
+
+ // Sol / lua
+ ctx.fillStyle=phase===5?"#d6a4ef":"#ffe18b";
+ ctx.beginPath();
+ ctx.arc(790-camera*.08,90,48,0,Math.PI*2);
+ ctx.fill();
+
+ // Montanhas
+ for(let i=0;i<8;i++){
+  let x=i*300-camera*.35;
+  ctx.fillStyle=phase===5?"#42334e":"#6d9a7c";
+  ctx.beginPath();
+  ctx.moveTo(x,490);
+  ctx.lineTo(x+150,230);
+  ctx.lineTo(x+300,490);
+  ctx.fill();
+ }
+
+ // Nuvens
+ for(let i=0;i<7;i++){
+  let x=(i*250-camera*.2+1200)%1200;
+  ctx.fillStyle="#ffffff99";
+  ctx.beginPath();
+  ctx.arc(x,100+i%2*60,25,0,7);
+  ctx.arc(x+30,95+i%2*60,30,0,7);
+  ctx.arc(x+60,110+i%2*60,22,0,7);
+  ctx.fill();
+ }
+}
+
+function drawWorld(){
+ let theme=themes[phase-1];
+
+ platforms.forEach(p=>{
+  rect(p.x,p.y,p.w,p.h,theme.platform);
+  rect(p.x,p.y,p.w,7,theme.ground);
+ });
+
+ hazards.forEach(h=>{
+  let x=h.x-camera;
+  ctx.font="30px Arial";
+  ctx.fillText(h.type==="banana"?"🍌":"🔺",x,h.y+24);
+ });
+
+ meals.forEach(m=>{
+  if(m.taken)return;
+  let x=m.x-camera;
+  ctx.font="30px Arial";
+  ctx.fillText("🥩",x,m.y);
+  ctx.font="17px Arial";
+  ctx.fillText("🍟",x+5,m.y+13);
+ });
+}
+
+function drawPG(){
+ const x=player.x-camera,y=player.y;
+
+ // Sombra
+ ctx.fillStyle="#0004";
+ ctx.beginPath();
+ ctx.ellipse(x+21,y+55,23,5,0,0,7);
+ ctx.fill();
+
+ // Pernas
+ ctx.fillStyle="#30303d";
+ ctx.fillRect(x+5,y+43,13,12);
+ ctx.fillRect(x+26,y+43,13,12);
+
+ // Corpo e barriga
+ ctx.fillStyle="#246bc4";
+ ctx.fillRect(x+5,y+19,34,30);
+ ctx.fillStyle="#75452f";
+ ctx.beginPath();
+ ctx.ellipse(x+23,y+35,19,17,0,0,7);
+ ctx.fill();
+
+ // Cabeça
+ ctx.fillStyle="#75452f";
+ ctx.beginPath();
+ ctx.arc(x+22,y+13,19,0,7);
+ ctx.fill();
+
+ // Cabelo
+ ctx.fillStyle="#17131a";
+ ctx.fillRect(x+6,y-5,32,8);
+ ctx.fillRect(x+4,y+1,7,8);
+
+ // Olhos
+ ctx.fillStyle="white";
+ ctx.fillRect(x+10,y+10,8,8);
+ ctx.fillRect(x+27,y+10,8,8);
+ ctx.fillStyle="#171717";
+ ctx.fillRect(x+14,y+12,4,5);
+ ctx.fillRect(x+30,y+12,4,5);
+
+ // Boca
+ ctx.fillStyle="#3d1010";
+ ctx.fillRect(x+16,y+25,15,5);
+
+ // Super Na Boquinha
+ if(player.superTime>0){
+  ctx.fillStyle="#ffb900";
+  ctx.font="28px Arial";
+  ctx.fillText("✨",x-10,y-20);
+
+  ctx.fillStyle="#a52b2b";
+  ctx.beginPath();
+  ctx.ellipse(x+22,y+27,23,25,0,0,7);
+  ctx.fill();
+
+  ctx.fillStyle="#fff";
+  ctx.fillRect(x+9,y+15,26,7);
+ }
+
+ if(player.inv>0&&frame%8<4){
+  ctx.globalAlpha=.4;
+  ctx.fillStyle="white";
+  ctx.fillRect(x,y-5,45,65);
+  ctx.globalAlpha=1;
+ }
+}
+
+function drawBoss(){
+ if(!boss.active||boss.defeated)return;
+
+ const x=boss.x-camera,y=boss.y;
+
+ // Aura
+ ctx.fillStyle="#a82d8a33";
+ ctx.beginPath();
+ ctx.arc(x+27,y+30,55,0,7);
+ ctx.fill();
+
+ // Pernas
+ ctx.fillStyle="#292030";
+ ctx.fillRect(x+5,y+52,15,17);
+ ctx.fillRect(x+34,y+52,15,17);
+
+ // Corpo moreno
+ ctx.fillStyle="#8c583c";
+ ctx.fillRect(x+4,y+20,47,36);
+
+ // Cabeça
+ ctx.fillStyle="#a76d49";
+ ctx.beginPath();
+ ctx.arc(x+27,y+15,24,0,7);
+ ctx.fill();
+
+ // Cabelo
+ ctx.fillStyle="#251b19";
+ ctx.fillRect(x+5,y-8,45,13);
+
+ // Olhos
+ ctx.fillStyle="#fff";
+ ctx.fillRect(x+12,y+9,10,9);
+ ctx.fillRect(x+33,y+9,10,9);
+ ctx.fillStyle="#a00";
+ ctx.fillRect(x+16,y+12,4,5);
+ ctx.fillRect(x+36,y+12,4,5);
+
+ // Vbanana
+ ctx.save();
+ ctx.translate(x+52,y+37);
+ ctx.rotate(-.6);
+ ctx.font="25px Arial";
+ ctx.fillText("🍌",0,0);
+ ctx.restore();
+
+ drawText("TINOCADAS",boss.x-15,y-20,16,"#ffb0ce");
+
+ // Barra de vida
+ rect(boss.x-10,y-37,75,8,"#333");
+ rect(boss.x-10,y-37,75*Math.max(0,boss.hp/5),8,"#ff355f");
+}
+
+function drawProjectiles(){
+ projectiles.forEach(p=>{
+  ctx.font="30px Arial";
+  ctx.fillText(p.type==="cake"?"🍰":"💥",p.x-camera,p.y);
+ });
+}
+
+function collide(a,b){
+ return a.x<b.x+b.w&&a.x+a.w>b.x&&
+ a.y<b.y+b.h&&a.y+a.h>b.y;
+}
+
+function hurt(){
+ if(player.inv>0||player.superTime>0)return;
+ lives--;
+ player.inv=100;
+ player.vy=-8;
+ player.vx=-player.facing*5;
+ updateHUD();
+ say("Cuidado! Tinocadas está ficando mais forte!");
+
+ if(lives<=0)gameState="dead";
+}
+
+function activateSuper(){
+ if(food<5||player.superTime>0)return;
+
+ food-=5;
+ player.superTime=180;
+ score+=500;
+ say("🔥 SUPER NA BOQUINHA ATIVADO!!!");
+ updateHUD();
+}
+
+function update(){
+ if(gameState!=="playing")return;
+
+ frame++;
+
+ let left=keys["a"]||keys["arrowleft"];
+ let right=keys["d"]||keys["arrowright"];
+
+ player.vx=0;
+ if(left){player.vx=-player.speed;player.facing=-1}
+ if(right){player.vx=player.speed;player.facing=1}
+
+ if((keys[" "]||keys["w"]||keys["arrowup"])&&player.grounded){
+  player.vy=-13;
+  player.grounded=false;
+ }
+
+ player.vy=Math.min(player.vy+.65,15);
+
+ player.x+=player.vx;
+ player.x=Math.max(0,Math.min(player.x,LEVEL_LENGTH-50));
+
+ player.y+=player.vy;
+ player.grounded=false;
+
+ platforms.forEach(p=>{
+  if(collide(player,p)&&player.vy>=0&&
+   player.y+player.h-player.vy<=p.y+12){
+   player.y=p.y-player.h;
+   player.vy=0;
+   player.grounded=true;
+  }
+ });
+
+ // Coleta de marmitas
+ meals.forEach(m=>{
+  if(!m.taken&&
+  Math.abs(player.x+20-m.x)<35&&
+  Math.abs(player.y+25-m.y)<40){
+   m.taken=true;
+   food++;
+   score+=100;
+   updateHUD();
+   say("🥩 MARMITA COLETADA! +100 pontos");
+  }
+ });
+
+ // Armadilhas
+ hazards.forEach(h=>{
+  if(collide(player,{x:h.x,y:h.y+5,w:h.w,h:20})){
+   hurt();
+  }
+ });
+
+ // Super
+ if(player.superTime>0){
+  player.superTime--;
+  if(boss.active&&!boss.defeated&&
+   Math.abs(player.x-boss.x)<100){
+   boss.hp-=.035;
+   if(boss.hp<=0)boss.defeated=true;
+  }
+ }
+
+ // Boss
+ if(boss.active&&!boss.defeated){
+  boss.teleport--;
+  boss.attack--;
+  boss.laser--;
+
+  // Teletransporte
+  if(boss.teleport<=0){
+   boss.x=Math.max(1250,Math.min(1950,player.x+300));
+   boss.y=410;
+   boss.teleport=220;
+   say("⚠ TINOCADAS SE TELETRANSPORTOU!");
+  }
+
+  // Bolo Banana
+  if(boss.attack<=0){
+   projectiles.push({
+    x:boss.x,y:boss.y+25,
+    vx:player.x<boss.x?-5:5,
+    type:"cake",w:30,h:30
+   });
+   boss.attack=150;
+   say("🍌 ATAQUE BOLO BANANA!");
+  }
+
+  // Laser da Vbanana
+  if(boss.laser<=0){
+   boss.laserWarning=65;
+   boss.laser=320;
+   say("⚡ A VBANANA ESTÁ CARREGANDO O LASER!");
+  }
+
+  if(boss.laserWarning>0){
+   boss.laserWarning--;
+   if(boss.laserWarning===0){
+    boss.laserActive=45;
+   }
+  }
+
+  if(boss.laserActive>0){
+   boss.laserActive--;
+   if(player.x<boss.x+500&&player.x+player.w>boss.x+30&&
+      player.y+player.h>boss.y+20&&player.y<boss.y+65){
+    hurt();
+   }
+  }
+
+  // Super derrota o vilão
+  if(boss.defeated){
+   boss.active=false;
+   score+=2000;
+   say("TINOCADAS FOI ENGOLIDO PELO SUPER NA BOQUINHA!");
+  }
+ }
+
+ // Projéteis
+ projectiles.forEach(p=>{
+  p.x+=p.vx;
+  if(collide(player,p))hurt();
+ });
+
+ projectiles=projectiles.filter(p=>p.x>-100&&p.x<2200);
+
+ if(player.y>H+80){
+  hurt();
+  player.y=350;
+  player.vy=0;
+ }
+
+ if(player.inv>0)player.inv--;
+ if(player.superTime===0)player.superCooldown=0;
+
+ camera=Math.max(0,Math.min(player.x-320,LEVEL_LENGTH-W));
+
+ // Final da fase
+ if(player.x>LEVEL_LENGTH-100){
+  if(phase<5){
+   phase++;
+   createLevel();
+   say("FASE "+phase+": "+themes[phase-1].name+"!");
+  }else if(boss.defeated){
+   gameState="victory";
+  }else{
+   player.x=LEVEL_LENGTH-180;
+   say("DERROTE TINOCADAS ANTES DE AVANÇAR!");
+  }
+ }
+
+ if(messageTimer>0)messageTimer--;
+}
+
+function draw(){
+ drawBackground();
+ drawWorld();
+ drawProjectiles();
+ drawBoss();
+ drawPG();
+
+ // Aviso de laser
+ if(boss.active&&boss.laserWarning>0){
+  ctx.fillStyle="#ff000066";
+  ctx.fillRect(0,boss.y+20,W,45);
+  ctx.fillStyle="white";
+  ctx.font="bold 22px Arial";
+  ctx.fillText("⚠ LASER CARREGANDO!",350,100);
+ }
+
+ // Laser
+ if(boss.active&&boss.laserActive>0){
+  ctx.fillStyle="#ffec48";
+  ctx.fillRect(boss.x-camera+30,boss.y+35,
+  Math.max(0,500),15);
+  ctx.fillStyle="#fff";
+  ctx.fillRect(boss.x-camera+30,boss.y+39,500,6);
+ }
+
+ if(player.superTime>0){
+  ctx.fillStyle="#ffdf4d";
+  ctx.font="bold 22px Arial";
+  ctx.fillText("SUPER NA BOQUINHA!",30,40);
+ }
+
+ if(gameState==="dead"){
+  overlay("FIM DE JOGO","Tinocadas venceu desta vez!","TENTE NOVAMENTE");
+ }
+
+ if(gameState==="victory"){
+  overlay("VITÓRIA ÉPICA!","PG SALVOU O PINGUINHO!","🥩 MARMITA DE ALCATRA CONQUISTADA!");
+ }
+}
+
+function overlay(title,subtitle,extra){
+ ctx.fillStyle="#090914dd";
+ ctx.fillRect(0,0,W,H);
+ ctx.textAlign="center";
+ ctx.fillStyle="#ffdc68";
+ ctx.font="bold 52px Arial";
+ ctx.fillText(title,W/2,180);
+ ctx.fillStyle="white";
+ ctx.font="bold 26px Arial";
+ ctx.fillText(subtitle,W/2,260);
+ ctx.font="22px Arial";
+ ctx.fillText(extra,W/2,320);
+ ctx.font="55px Arial";
+ ctx.fillText(gameState==="victory"?"🥩❤️":"💀",W/2,410);
+ ctx.textAlign="left";
+}
+
+function loop(){
+ update();
+ draw();
+ requestAnimationFrame(loop);
+}
+
+// Teclado
+window.addEventListener("keydown",e=>{
+ let k=e.key.toLowerCase();
+ keys[k]=true;
+
+ if([" ","arrowup","arrowleft","arrowright"].includes(k))
+ e.preventDefault();
+
+ if(k==="x"){
+  activateSuper();
+ }
+
+ if(k==="r"&&(gameState==="dead"||gameState==="victory")){
+  restart();
+ }
+});
+
+window.addEventListener("keyup",e=>{
+ keys[e.key.toLowerCase()]=false;
+});
+
+restart();
+loop();
 </script>
-
 </body>
 </html>
