@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -101,7 +100,7 @@ function makeLevel(n){
     foods.push({x,y,r:13,taken:false});
   }
   gold={x:levelWidth-430,y:H-160,taken:false};
-  player={x:90,y:H-150,vx:0,vy:0,w:42,h:58,ground:false,face:1};
+  player={x:90,y:H-150,vx:0,vy:0,w:42,h:58,ground:false,face:1,hp:player?.hp??3};
   enemy={x:levelWidth-100,y:H-150,vx:0,vy:0,w:48,h:62,ground:false,hit:0,jumpWait:0};
   camera=0;particles=[];projectiles=[];boss=null;
   document.getElementById("stage").textContent="FASE "+(n+1)+" — "+stageNames[n];
@@ -356,7 +355,7 @@ document.getElementById("full").onclick=()=>{
  else document.exitFullscreen?.();
 };
 document.getElementById("sound").onclick=()=>{soundOn=!soundOn;document.getElementById("sound").textContent=soundOn?"🔊 SOM":"🔇 SOM"};
-player={x:80,y:H-150,vx:0,vy:0,w:42,h:58,ground:false,face:1,hp:3};
+player={x:80,y:H-150,vx:0,vy:0,w:42,h:58,ground:false,face:1,hp:player?.hp??3};
 makeLevel(0);requestAnimationFrame(loop);
 </script>
 </body>
